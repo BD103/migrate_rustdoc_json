@@ -7,3 +7,7 @@ edition = "2024"
 pico-args = "0.5.0"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
+
+rustdoc_types_43 = { version = "0.39", package = "rustdoc-types", features = ["rustc-hash"] }
+rustdoc_types_44 = { version = "0.40", package = "rustdoc-types", features = ["rustc-hash"] }
+rustdoc_types_45 = { version = "0.41", package = "rustdoc-types", features = ["rustc-hash"] }

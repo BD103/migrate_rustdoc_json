@@ -19,6 +19,9 @@ name = "migrate_rustdoc_json"
 version = "0.1.0"
 dependencies = [
  "pico-args",
+ "rustdoc-types 0.39.0",
+ "rustdoc-types 0.40.0",
+ "rustdoc-types 0.41.0",
  "serde",
  "serde_json",
 ]
@@ -45,6 +48,42 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1885c039570dc00dcb4ff087a89e185fd56bae234ddc7f056a945bf36467248d"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "rustc-hash"
+version = "2.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "357703d41365b4b27c590e3ed91eabb1b663f07c4c084095e60cbed4362dff0d"
+
+[[package]]
+name = "rustdoc-types"
+version = "0.39.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3b61d5673c3f4b49d35be6a58c49210596f61b8db580bc3b6d9dee5e9dc5458"
+dependencies = [
+ "rustc-hash",
+ "serde",
+]
+
+[[package]]
+name = "rustdoc-types"
+version = "0.40.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "39c891e8dfc3b35c614707145e1483d74a9c66f85f709f8cfa67b208d355016e"
+dependencies = [
+ "rustc-hash",
+ "serde",
+]
+
+[[package]]
+name = "rustdoc-types"
+version = "0.41.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "79f6e675de57460d306a273321d3799b010b23713144caffe00b4a4fde83620e"
+dependencies = [
+ "rustc-hash",
+ "serde",
 ]
 
 [[package]]
