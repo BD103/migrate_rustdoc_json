@@ -1,5 +1,6 @@
 mod args;
 mod migrate;
+mod migrations;
 mod version;
 
 fn main() {
