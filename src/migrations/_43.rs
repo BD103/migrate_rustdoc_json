@@ -1,26 +1,39 @@
-use rustdoc_types_44 as current;
-use rustdoc_types_45 as up;
+use rustdoc_types_43 as current;
+use rustdoc_types_44 as up;
 
 use crate::{declare_migrate_up, declare_serialize_deserialize, migrate::MigrateUp};
 
-declare_migrate_up!(44, 45);
+declare_migrate_up!(43, 44);
 declare_serialize_deserialize!();
 
-/// The column's index used to start at zero, now it starts at one.
-impl MigrateUp for current::Span {
-    type Up = up::Span;
+/// The `Crate::target` field was added, and defaults to be blank.
+impl MigrateUp for current::Crate {
+    type Up = up::Crate;
 
     fn migrate_up(self) -> Self::Up {
         let Self {
-            filename,
-            begin: (begin_line, begin_col),
-            end: (end_line, end_col),
+            root,
+            crate_version,
+            includes_private,
+            index,
+            paths,
+            external_crates,
+            format_version,
         } = self;
 
-        up::Span {
-            filename,
-            begin: (begin_line, begin_col + 1),
-            end: (end_line, end_col + 1),
+        up::Crate {
+            root: root.migrate_up(),
+            crate_version: crate_version.migrate_up(),
+            includes_private: includes_private.migrate_up(),
+            index: index.migrate_up(),
+            paths: paths.migrate_up(),
+            external_crates: external_crates.migrate_up(),
+            target: up::Target {
+                triple: String::new(),
+                target_features: Vec::new(),
+            },
+            // Bump the format version.
+            format_version: format_version + 1,
         }
     }
 }
@@ -28,7 +41,6 @@ impl MigrateUp for current::Span {
 crate::impl_migrations! {
     AssocItemConstraint,
     Constant,
-    Crate44,
     Deprecation,
     Discriminant,
     DynTrait,
@@ -49,10 +61,9 @@ crate::impl_migrations! {
     PolyTrait,
     Primitive,
     ProcMacro,
+    Span,
     Static,
     Struct,
-    Target,
-    TargetFeature,
     Trait,
     TraitAlias,
     TypeAlias,

@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! impl_migrations {
     // A custom `Crate` implementation that updates `format_version`.
-    { Crate, $($tt:tt)* } => {
+    { Crate44, $($tt:tt)* } => {
         impl $crate::migrate::MigrateUp for current::Crate {
             type Up = up::Crate;
 
