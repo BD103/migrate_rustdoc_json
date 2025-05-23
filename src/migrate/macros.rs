@@ -426,4 +426,57 @@ macro_rules! impl_single_migration {
             }
         }
     };
+    {
+        enum $enum:ident {
+            $(
+                "struct" {
+                    $(
+                        $struct_variant:ident {
+                            $($struct_field:ident),* $(,)?
+                        }
+                    ),* $(,)?
+                },
+            )?
+            $(
+                "tuple" {
+                    $(
+                        $tuple_variant:ident($($tuple_field:ident),*)
+                    ),* $(,)?
+                },
+            )?
+            $(
+                "unit" {
+                    $(
+                        $unit_variant:ident
+                    ),* $(,)?
+                },
+            )?
+        }
+    } => {
+        impl $crate::migrate::MigrateUp for current::$enum {
+            type Up = up::$enum;
+
+            fn migrate_up(self) -> Self::Up {
+                match self {
+                    $($(
+                        Self::$struct_variant {
+                            $($struct_field),*
+                        } => up::$enum::$struct_variant {
+                            $($struct_field: $struct_field.migrate_up()),*
+                        },
+                    )*)?
+
+                    $($(
+                        Self::$tuple_variant($($tuple_field),*) => up::$enum::$tuple_variant(
+                            $($tuple_field.migrate_up()),*
+                        ),
+                    )*)?
+
+                    $($(
+                        Self::$unit_variant => up::$enum::$unit_variant,
+                    )*)?
+                }
+            }
+        }
+    };
 }
