@@ -1,5 +1,39 @@
 #[macro_export]
 macro_rules! impl_migrations {
+    // A custom `Crate` implementation that updates `format_version`.
+    { Crate, $($tt:tt)* } => {
+        impl $crate::migrate::MigrateUp for current::Crate {
+            type Up = up::Crate;
+
+            fn migrate_up(self) -> Self::Up {
+                let Self {
+                    root,
+                    crate_version,
+                    includes_private,
+                    index,
+                    paths,
+                    external_crates,
+                    target,
+                    format_version,
+                } = self;
+
+                up::Crate {
+                    root: root.migrate_up(),
+                    crate_version: crate_version.migrate_up(),
+                    includes_private: includes_private.migrate_up(),
+                    index: index.migrate_up(),
+                    paths: paths.migrate_up(),
+                    external_crates: external_crates.migrate_up(),
+                    target: target.migrate_up(),
+                    // Bump the format version.
+                    format_version: format_version + 1,
+                }
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+
     // All structs, sorted alphabetically
     { AssocItemConstraint, $($tt:tt)* } => {
         $crate::impl_single_migration! {
@@ -18,22 +52,6 @@ macro_rules! impl_migrations {
                 expr,
                 value,
                 is_literal,
-            }
-        }
-
-        $crate::impl_migrations! { $($tt)* }
-    };
-    { Crate, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
-            struct Crate {
-                root,
-                crate_version,
-                includes_private,
-                index,
-                paths,
-                external_crates,
-                target,
-                format_version,
             }
         }
 
