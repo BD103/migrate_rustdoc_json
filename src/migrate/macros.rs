@@ -858,3 +858,47 @@ macro_rules! impl_single_migration {
         }
     };
 }
+
+#[macro_export]
+macro_rules! declare_migration_fns {
+    ($current:literal, $up:literal) => {
+        #[doc = concat!("Migrates a v", $current, " `Crate` to a ", $up, " `Crate`.")]
+        /// 
+        /// # Safety
+        /// 
+        #[doc = concat!("`current_crate` must be a [`rustdoc_types_", $current, "::Crate`] put in a [`Box`] then converted to a raw")]
+        /// pointer with [`Box::into_raw()`].
+        /// 
+        #[doc = concat!("The returned raw pointer is a [`rustdoc_types_", $up, "::Crate`] put in a [`Box`] then converted to a")]
+        /// raw pointer with [`Box::into_raw()`].
+        pub unsafe fn migrate_up(current_crate: *mut ()) -> *mut () {
+            use $crate::migrate::MigrateUp;
+            use ::std::boxed::Box;
+
+            let current_crate = unsafe {
+                Box::from_raw(current_crate.cast::<current::Crate>())
+            };
+        
+            let up_crate = Box::new((*current_crate).migrate_up());
+        
+            Box::into_raw(up_crate).cast::<()>()
+        }
+
+        pub fn deserialize(current_crate: &str) -> *mut () {
+            use ::std::boxed::Box;
+
+            let current_crate: current::Crate = ::serde_json::from_str(current_crate).unwrap();
+            let current_crate = Box::new(current_crate);
+
+            Box::into_raw(current_crate).cast::<()>()
+        }
+
+        pub unsafe fn serialize(current_crate: *mut ()) -> String {
+            let current_crate = unsafe {
+                Box::from_raw(current_crate.cast::<current::Crate>())
+            };
+
+            ::serde_json::to_string(current_crate.as_ref()).unwrap()
+        }
+    };
+}

@@ -1,7 +1,9 @@
 use rustdoc_types_44 as current;
 use rustdoc_types_45 as up;
 
-use crate::migrate::MigrateUp;
+use crate::{declare_migration_fns, migrate::MigrateUp};
+
+declare_migration_fns!(44, 45);
 
 /// The column's index used to start at zero, now it starts at one.
 impl MigrateUp for current::Span {
