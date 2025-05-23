@@ -1,3 +1,4 @@
+mod _41;
 mod _42;
 mod _43;
 mod _44;
@@ -211,11 +212,7 @@ static MIGRATIONS: [(MigrateUpFn, DeserializeFn, SerializeFn); 45] = [
         unimplemented_deserialize::<40>,
         unimplemented_serialize::<40>,
     ),
-    (
-        unimplemented_migrate_up::<41>,
-        unimplemented_deserialize::<41>,
-        unimplemented_serialize::<41>,
-    ),
+    (_41::migrate_up, _41::deserialize, _41::serialize),
     (_42::migrate_up, _42::deserialize, _42::serialize),
     (_43::migrate_up, _43::deserialize, _43::serialize),
     (_44::migrate_up, _44::deserialize, _44::serialize),

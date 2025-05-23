@@ -503,6 +503,24 @@ macro_rules! impl_migrations {
                         output,
                     },
                 },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { GenericArgs42, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum GenericArgs {
+                "struct" {
+                    AngleBracketed {
+                        args,
+                        constraints,
+                    },
+                    Parenthesized {
+                        inputs,
+                        output,
+                    },
+                },
                 "unit" {
                     ReturnTypeNotation,
                 },
@@ -911,12 +929,12 @@ macro_rules! impl_single_migration {
 macro_rules! declare_migrate_up {
     ($current:literal, $up:literal) => {
         #[doc = concat!("Migrates a v", $current, " `Crate` to a ", $up, " `Crate`.")]
-        /// 
+        ///
         /// # Safety
-        /// 
+        ///
         #[doc = concat!("`current_crate` must be a [`rustdoc_types_", $current, "::Crate`] put in a [`Box`] then converted to a raw")]
         /// pointer with [`Box::into_raw()`].
-        /// 
+        ///
         #[doc = concat!("The returned raw pointer is a [`rustdoc_types_", $up, "::Crate`] put in a [`Box`] then converted to a")]
         /// raw pointer with [`Box::into_raw()`].
         pub unsafe fn migrate_up(current_crate: *mut ()) -> *mut () {
@@ -926,9 +944,9 @@ macro_rules! declare_migrate_up {
             let current_crate = unsafe {
                 Box::from_raw(current_crate.cast::<current::Crate>())
             };
-        
+
             let up_crate = Box::new((*current_crate).migrate_up());
-        
+
             Box::into_raw(up_crate).cast::<()>()
         }
     };
@@ -947,9 +965,7 @@ macro_rules! declare_serialize_deserialize {
         }
 
         pub unsafe fn serialize(current_crate: *mut ()) -> String {
-            let current_crate = unsafe {
-                Box::from_raw(current_crate.cast::<current::Crate>())
-            };
+            let current_crate = unsafe { Box::from_raw(current_crate.cast::<current::Crate>()) };
 
             ::serde_json::to_string(current_crate.as_ref()).unwrap()
         }
