@@ -1,5 +1,6 @@
 #[macro_export]
 macro_rules! impl_migrations {
+    // All structs, sorted alphabetically
     { AssocItemConstraint, $($tt:tt)* } => {
         $crate::impl_single_migration! {
             struct AssocItemConstraint {
@@ -387,6 +388,383 @@ macro_rules! impl_migrations {
 
         $crate::impl_migrations! { $($tt)* }
     };
+
+    // All enums, sorted alphabetically
+    { Abi, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum Abi {
+                "struct" {
+                    C { unwind },
+                    Cdecl { unwind },
+                    Stdcall { unwind },
+                    Fastcall { unwind },
+                    Aapcs { unwind },
+                    Win64 { unwind },
+                    SysV64 { unwind },
+                    System { unwind },
+                },
+                "tuple" {
+                    Other(string),
+                },
+                "unit" {
+                    Rust,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { AssocItemConstraintKind, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum AssocItemConstraintKind {
+                "tuple" {
+                    Equality(term),
+                    Constraint(generic_bounds),
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { GenericArg, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum GenericArg {
+                "tuple" {
+                    Lifetime(string),
+                    Type(type_),
+                    Const(constant),
+                },
+                "unit" {
+                    Infer,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { GenericArgs, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum GenericArgs {
+                "struct" {
+                    AngleBracketed {
+                        args,
+                        constraints,
+                    },
+                    Parenthesized {
+                        inputs,
+                        output,
+                    },
+                },
+                "unit" {
+                    ReturnTypeNotation,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { GenericBound, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum GenericBound {
+                "struct" {
+                    TraitBound {
+                        trait_,
+                        generic_params,
+                        modifier,
+                    },
+                },
+                "tuple" {
+                    Outlives(string),
+                    Use(precise_capturing_args),
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { GenericParamDefKind, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum GenericParamDefKind {
+                "struct" {
+                    Lifetime {
+                        outlives,
+                    },
+                    Type {
+                        bounds,
+                        default,
+                        is_synthetic,
+                    },
+                    Const {
+                        type_,
+                        default,
+                    },
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { ItemEnum, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum ItemEnum {
+                "struct" {
+                    ExternCrate {
+                        name,
+                        rename,
+                    },
+                    Constant {
+                        type_,
+                        const_,
+                    },
+                    AssocConst {
+                        type_,
+                        value,
+                    },
+                    AssocType {
+                        generics,
+                        bounds,
+                        type_,
+                    },
+                },
+                "tuple" {
+                    Module(module),
+                    Use(use_),
+                    Union(union_),
+                    Struct(struct_),
+                    StructField(type_),
+                    Enum(enum_),
+                    Variant(variant),
+                    Function(function),
+                    Trait(trait_),
+                    TraitAlias(trait_alias),
+                    Impl(impl_),
+                    TypeAlias(type_alias),
+                    Static(static_),
+                    Macro(string),
+                    ProcMacro(proc_macro),
+                    Primitive(primitive),
+                },
+                "unit" {
+                    ExternType,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { ItemKind, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum ItemKind {
+                "unit" {
+                    Module,
+                    ExternCrate,
+                    Use,
+                    Struct,
+                    StructField,
+                    Union,
+                    Enum,
+                    Variant,
+                    Function,
+                    TypeAlias,
+                    Constant,
+                    Trait,
+                    TraitAlias,
+                    Impl,
+                    Static,
+                    ExternType,
+                    Macro,
+                    ProcAttribute,
+                    ProcDerive,
+                    AssocConst,
+                    AssocType,
+                    Primitive,
+                    Keyword,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { MacroKind, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum MacroKind {
+                "unit" {
+                    Bang,
+                    Attr,
+                    Derive,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { PreciseCapturingArg, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum PreciseCapturingArg {
+                "tuple" {
+                    Lifetime(string),
+                    Param(string),
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { StructKind, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum StructKind {
+                "struct" {
+                    Plain {
+                        fields,
+                        has_stripped_fields,
+                    },
+                },
+                "tuple" {
+                    Tuple(ids),
+                },
+                "unit" {
+                    Unit,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { Term, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum Term {
+                "tuple" {
+                    Type(type_),
+                    Constant(constant),
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { TraitBoundModifier, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum TraitBoundModifier {
+                "unit" {
+                    None,
+                    Maybe,
+                    MaybeConst,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { Type, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum Type {
+                "struct" {
+                    Array {
+                        type_,
+                        len,
+                    },
+                    Pat {
+                        type_,
+                        // HACK: This could break at any time, so be warned.
+                        __pat_unstable_do_not_use,
+                    },
+                    RawPointer {
+                        is_mutable,
+                        type_,
+                    },
+                    BorrowedRef {
+                        lifetime,
+                        is_mutable,
+                        type_,
+                    },
+                    QualifiedPath {
+                        name,
+                        args,
+                        self_type,
+                        trait_,
+                    },
+                },
+                "tuple" {
+                    ResolvedPath(path),
+                    DynTrait(dyn_trait),
+                    Generic(string),
+                    Primitive(string),
+                    FunctionPointer(function_pointer),
+                    Tuple(types),
+                    Slice(type_),
+                    ImplTrait(generic_bounds),
+                },
+                "unit" {
+                    Infer,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { VariantKind, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum VariantKind {
+                "struct" {
+                    Struct {
+                        fields,
+                        has_stripped_fields,
+                    },
+                },
+                "tuple" {
+                    Tuple(ids),
+                },
+                "unit" {
+                    Plain,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { Visibility, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum Visibility {
+                "struct" {
+                    Restricted {
+                        parent,
+                        path,
+                    },
+                },
+                "unit" {
+                    Public,
+                    Default,
+                    Crate,
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+    { WherePredicate, $($tt:tt)* } => {
+        $crate::impl_single_migration! {
+            enum WherePredicate {
+                "struct" {
+                    BoundPredicate {
+                        type_,
+                        bounds,
+                        generic_params,
+                    },
+                    LifetimePredicate {
+                        lifetime,
+                        outlives,
+                    },
+                    EqPredicate {
+                        lhs,
+                        rhs,
+                    },
+                },
+            }
+        }
+
+        $crate::impl_migrations! { $($tt)* }
+    };
+
     {} => {};
 }
 
