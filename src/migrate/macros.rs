@@ -779,7 +779,7 @@ macro_rules! impl_single_migration {
             type Up = up::$struct;
 
             fn migrate_up(self) -> Self::Up {
-                let current::$struct {
+                let Self {
                     $($field),*
                 } = self;
 
@@ -796,7 +796,7 @@ macro_rules! impl_single_migration {
             type Up = up::$struct;
 
             fn migrate_up(self) -> Self::Up {
-                let current::$struct($($field),*) = self;
+                let Self($($field),*) = self;
 
                 up::$struct (
                     $($field.migrate_up()),*
