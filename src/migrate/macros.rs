@@ -31,7 +31,7 @@ macro_rules! impl_migrations {
 
         $crate::impl_migrations! { $($tt)* }
     };
-    { Crate44, $($tt:tt)* } => {
+    { CrateV44, $($tt:tt)* } => {
         impl $crate::migrate::MigrateUp for current::Crate {
             type Up = up::Crate;
 
@@ -508,7 +508,7 @@ macro_rules! impl_migrations {
 
         $crate::impl_migrations! { $($tt)* }
     };
-    { GenericArgs42, $($tt:tt)* } => {
+    { GenericArgsV42, $($tt:tt)* } => {
         $crate::impl_single_migration! {
             enum GenericArgs {
                 "struct" {

@@ -73,7 +73,7 @@ crate::impl_migrations! {
     Abi,
     AssocItemConstraintKind,
     GenericArg,
-    GenericArgs42,
+    GenericArgsV42,
     GenericBound,
     GenericParamDefKind,
     ItemEnum,
