@@ -1,9 +1,10 @@
 use rustdoc_types_44 as current;
 use rustdoc_types_45 as up;
 
-use crate::{declare_migration_fns, migrate::MigrateUp};
+use crate::{declare_migrate_up, declare_serialize_deserialize, migrate::MigrateUp};
 
-declare_migration_fns!(44, 45);
+declare_migrate_up!(44, 45);
+declare_serialize_deserialize!();
 
 /// The column's index used to start at zero, now it starts at one.
 impl MigrateUp for current::Span {

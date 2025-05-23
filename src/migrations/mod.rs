@@ -1,4 +1,5 @@
 mod _44;
+mod _45;
 
 type MigrateUpFn = unsafe fn(*mut ()) -> *mut ();
 type DeserializeFn = fn(&str) -> *mut ();
@@ -7,7 +8,7 @@ type SerializeFn = unsafe fn(*mut ()) -> String;
 /// A function lookup table for migrating `rustdoc` JSON from one version to another.
 ///
 /// `MIGRATIONS[0]` migrates v1 to v2, `MIGRATIONS[1]` migrates v2 to v3, etc.
-static MIGRATIONS: [(MigrateUpFn, DeserializeFn, SerializeFn); 44] = [
+static MIGRATIONS: [(MigrateUpFn, DeserializeFn, SerializeFn); 45] = [
     (
         unimplemented_migrate_up::<1>,
         unimplemented_deserialize::<1>,
@@ -224,6 +225,11 @@ static MIGRATIONS: [(MigrateUpFn, DeserializeFn, SerializeFn); 44] = [
         unimplemented_serialize::<43>,
     ),
     (_44::migrate_up, _44::deserialize, _44::serialize),
+    (
+        unimplemented_migrate_up::<45>,
+        _45::deserialize,
+        _45::serialize,
+    ),
 ];
 
 pub fn migrate_up(current: &str, to_version: u32) -> String {

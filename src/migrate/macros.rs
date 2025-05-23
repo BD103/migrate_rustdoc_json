@@ -860,7 +860,7 @@ macro_rules! impl_single_migration {
 }
 
 #[macro_export]
-macro_rules! declare_migration_fns {
+macro_rules! declare_migrate_up {
     ($current:literal, $up:literal) => {
         #[doc = concat!("Migrates a v", $current, " `Crate` to a ", $up, " `Crate`.")]
         /// 
@@ -883,7 +883,12 @@ macro_rules! declare_migration_fns {
         
             Box::into_raw(up_crate).cast::<()>()
         }
+    };
+}
 
+#[macro_export]
+macro_rules! declare_serialize_deserialize {
+    () => {
         pub fn deserialize(current_crate: &str) -> *mut () {
             use ::std::boxed::Box;
 
