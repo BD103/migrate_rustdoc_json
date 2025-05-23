@@ -372,7 +372,7 @@ macro_rules! impl_migrations {
                 id,
                 is_glob,
             }
-            
+
         }
 
         $crate::impl_migrations! { $($tt)* }

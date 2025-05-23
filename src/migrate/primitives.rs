@@ -1,6 +1,7 @@
 use std::{
     collections::HashMap,
     hash::{BuildHasher, Hash},
+    path::PathBuf,
 };
 
 use super::MigrateUp;
@@ -24,14 +25,43 @@ macro_rules! impl_primitive_migrations {
 impl_primitive_migrations! {
     bool,
     String,
-    u32
+    u32,
+    usize,
+    PathBuf
 }
+
+macro_rules! impl_tuple_migrations {
+    (
+        $(($n:tt, $t:ident)),*
+    ) => {
+        impl<$($t: MigrateUp),*> MigrateUp for ($($t,)*) {
+            type Up = ($($t::Up,)*);
+
+            fn migrate_up(self) -> Self::Up {
+                (
+                    $(self.$n.migrate_up(),)*
+                )
+            }
+        }
+    };
+}
+
+// Only implement `MigrateUp` for the tuple sizes that need it.
+impl_tuple_migrations!((0, T0), (1, T1));
 
 impl<T: MigrateUp> MigrateUp for Option<T> {
     type Up = Option<T::Up>;
 
     fn migrate_up(self) -> Self::Up {
         self.map(MigrateUp::migrate_up)
+    }
+}
+
+impl<T: MigrateUp> MigrateUp for Box<T> {
+    type Up = Box<T::Up>;
+
+    fn migrate_up(self) -> Self::Up {
+        Box::new((*self).migrate_up())
     }
 }
 
