@@ -1,12 +1,18 @@
+//! Implements [`MigrateUp`] for Rust primitives and [`std`] library types.
+
 use std::{
     collections::HashMap,
     hash::{BuildHasher, Hash},
     path::PathBuf,
 };
 
-use super::MigrateUp;
+use crate::migrate::MigrateUp;
 
-macro_rules! impl_primitive_migrations {
+/// Implements [`MigrateUp`] for types that are not versioned, usually because they are not within
+/// `rustdoc_types`.
+///
+/// For all unversioned types, `Self::Up = Self`.
+macro_rules! impl_unversioned_migrations {
     {
         $($primitive:path),*
     } => {
@@ -22,7 +28,9 @@ macro_rules! impl_primitive_migrations {
     };
 }
 
-impl_primitive_migrations! {
+// Only implement `MigrateUp` for types that are used by `rustdoc_types`, to avoid increasing
+// compile times even further.
+impl_unversioned_migrations! {
     bool,
     String,
     u32,
@@ -30,6 +38,10 @@ impl_primitive_migrations! {
     PathBuf
 }
 
+/// Implements [`MigrateUp`] for a tuple whose contents also implement [`MigrateUp`].
+///
+/// This macro is designed to work with `variadics_please::all_tuples_enumerated!`, but currently
+/// doesn't to improve compile-times.
 macro_rules! impl_tuple_migrations {
     (
         $(($n:tt, $t:ident)),*

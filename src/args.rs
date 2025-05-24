@@ -1,3 +1,5 @@
+//! The CLI arguments and their parsing logic.
+
 use std::{convert::Infallible, ffi::OsStr, path::PathBuf};
 
 #[derive(Debug)]

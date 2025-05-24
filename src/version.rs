@@ -1,3 +1,5 @@
+//! Format-version parsing from `rustdoc` JSON.
+
 use anyhow::Context;
 use serde::Deserialize;
 

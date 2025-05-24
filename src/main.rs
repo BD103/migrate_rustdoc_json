@@ -1,8 +1,10 @@
 use anyhow::Context;
 
 mod args;
+mod macros;
 mod migrate;
 mod migrations;
+mod primitives;
 mod version;
 
 fn main() -> anyhow::Result<()> {

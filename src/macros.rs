@@ -1,23 +1,25 @@
+//! The macros used by this crate.
+
 /// Implements [`MigrateUp`](crate::migrate::MigrateUp) for `rustdoc_types` types that do not
 /// change in this version.
-/// 
+///
 /// This macro requires that you import the current version of `rustdoc_types` as the name
 /// `current` and the newer version as the name `up`.
-/// 
+///
 /// Each supported type has a separate branch in this macro, meaning you can view a list of all
 /// supported types in `rustdoc`'s auto-generated reference. Note that multiple versions of the
 /// same type may be supported, such as `Crate` and `Crate@v44`. The "unversioned" branch is for
 /// the oldest supported version of `rustdoc_types`, while the "versioned" branch is for the
 /// specified version (v44) and later.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
-/// 
+///
 /// use migrate_rustdoc_types::impl_unchanged_migrations;
-/// 
+///
 /// impl_unchanged_migrations! {
 ///     Crate,
 ///     Constant,
@@ -862,20 +864,20 @@ macro_rules! impl_unchanged_migrations {
 
 /// Implements [`MigrateUp`](crate::migrate::MigrateUp) for a single type that does not change in
 /// this version.
-/// 
+///
 /// You likely want to use [`impl_unchanged_migrations!`] instead of this macro.
-/// 
+///
 /// This macro uses a pseudo-Rust DSL that specifies the type kind, field names, and variant names
 /// of a type.
-/// 
+///
 /// # Examples
-/// 
+///
 /// ```
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
-/// 
+///
 /// use migrate_rustdoc_types::impl_single_unchanged_migration;
-/// 
+///
 /// impl_single_unchanged_migration! {
 ///     struct NamedStruct {
 ///         field_a,
@@ -883,24 +885,24 @@ macro_rules! impl_unchanged_migrations {
 ///     }
 /// }
 /// ```
-/// 
+///
 /// ```
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
-/// 
+///
 /// use migrate_rustdoc_types::impl_single_unchanged_migration;
-/// 
+///
 /// impl_single_unchanged_migration! {
 ///     struct NamedTuple(field_a, field_b);
 /// }
 /// ```
-/// 
+///
 /// ```
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
-/// 
+///
 /// use migrate_rustdoc_types::impl_single_unchanged_migration;
-/// 
+///
 /// impl_single_unchanged_migration! {
 ///     enum Enum {
 ///         // Note that order matters here.
@@ -1012,18 +1014,18 @@ macro_rules! impl_single_unchanged_migration {
 }
 
 /// Declares the `migrate_up()` function for a given migration.
-/// 
+///
 /// This macro accepts two parameter: the format version of the current `rustdoc_types` and the
 /// format version of the migrated `rustdoc_types`.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
-/// 
+///
 /// use migrate_rustdoc_types::declare_migrate_up;
-/// 
+///
 /// declare_migrate_up!(41, 42);
 /// ```
 #[macro_export]
@@ -1054,15 +1056,15 @@ macro_rules! declare_migrate_up {
 }
 
 /// Declares the `serialize()` and `deserialize()` functions for a given migration.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
-/// 
+///
 /// use migrate_rustdoc_types::declare_serialize_deserialize;
-/// 
+///
 /// declare_serialize_deserialize!();
 /// ```
 #[macro_export]

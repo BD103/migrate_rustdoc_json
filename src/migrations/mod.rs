@@ -1,3 +1,5 @@
+//! All migrations currently implemented by this crate.
+
 mod _41;
 mod _42;
 mod _43;
