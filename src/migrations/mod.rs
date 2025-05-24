@@ -221,7 +221,7 @@ static MIGRATIONS: [(MigrateUpFn, DeserializeFn, SerializeFn); 45] = [
     (v43::migrate_up, v43::deserialize, v43::serialize),
     (v44::migrate_up, v44::deserialize, v44::serialize),
     (
-        // v46 does not exist yet, so we cannot migrate up past v45.
+        // v46 does not exist yet, so we cannot migrate past v45.
         unimplemented_migrate_up::<45>,
         v45::deserialize,
         v45::serialize,
@@ -240,33 +240,52 @@ pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
 
     let deserialize = MIGRATIONS[current_version as usize - 1].1;
 
+    // Convert the JSON string into an `UntypedCrate`.
     let mut crate_ = (deserialize)(current);
 
     for i in current_version..to_version {
         let migrate_up = MIGRATIONS[i as usize - 1].0;
+
+        // Migrate the `UntypedCrate` through all versions between the input and the desired
+        // version.
         crate_ = (migrate_up)(crate_);
     }
 
     let serialize = MIGRATIONS[to_version as usize - 1].2;
 
+    // Convert the `UntypedCrate` back to a JSON string.
     Ok((serialize)(crate_))
 }
 
 /// Panics when called, displaying an error that the given migration isn't yet supported.
 fn unimplemented_migrate_up<const N: usize>(_: UntypedCrate) -> UntypedCrate {
-    unimplemented_inner(N);
+    fn inner(n: usize) -> UntypedCrate {
+        unimplemented!(
+            "migrating from format version v{} to format version v{} is not yet supported",
+            n,
+            n + 1,
+        );
+    }
+
+    inner(N)
 }
 
 /// Panics when called, displaying an error that deserialization isn't yet supported.
 fn unimplemented_deserialize<const N: usize>(_: &str) -> UntypedCrate {
-    unimplemented_inner(N);
+    fn inner(n: usize) -> UntypedCrate {
+        unimplemented!("format version v{n} is not yet supported");
+    }
+
+    inner(N)
 }
 
-/// Panics when called, displaying an error that serialization isn't yet supported.
+/// Panics when called, displaying an error that serialization should be supported but isn't.
 fn unimplemented_serialize<const N: usize>(_: UntypedCrate) -> String {
-    unimplemented_inner(N);
-}
+    fn inner(n: usize) -> String {
+        // This is unreachable because if we support migrating to this version, we should support
+        // serializing it as well.
+        unreachable!("unable to convert `Crate` format version v{n} to JSON");
+    }
 
-fn unimplemented_inner(n: usize) -> ! {
-    unimplemented!("format v{n} is not yet supported");
+    inner(N)
 }
