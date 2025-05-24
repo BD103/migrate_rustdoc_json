@@ -38,7 +38,7 @@ impl MigrateUp for current::Crate {
     }
 }
 
-crate::impl_migrations! {
+crate::impl_unchanged_migrations! {
     AssocItemConstraint,
     Constant,
     Deprecation,
@@ -73,7 +73,7 @@ crate::impl_migrations! {
     Abi,
     AssocItemConstraintKind,
     GenericArg,
-    GenericArgsV42,
+    GenericArgs@v42,
     GenericBound,
     GenericParamDefKind,
     ItemEnum,

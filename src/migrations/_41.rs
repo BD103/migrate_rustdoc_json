@@ -6,7 +6,7 @@ use crate::{declare_migrate_up, declare_serialize_deserialize};
 declare_migrate_up!(41, 42);
 declare_serialize_deserialize!();
 
-crate::impl_migrations! {
+crate::impl_unchanged_migrations! {
     Crate,
     AssocItemConstraint,
     Constant,

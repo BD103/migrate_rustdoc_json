@@ -1,5 +1,31 @@
+/// Implements [`MigrateUp`](crate::migrate::MigrateUp) for `rustdoc_types` types that do not
+/// change in this version.
+/// 
+/// This macro requires that you import the current version of `rustdoc_types` as the name
+/// `current` and the newer version as the name `up`.
+/// 
+/// Each supported type has a separate branch in this macro, meaning you can view a list of all
+/// supported types in `rustdoc`'s auto-generated reference. Note that multiple versions of the
+/// same type may be supported, such as `Crate` and `Crate@v44`. The "unversioned" branch is for
+/// the oldest supported version of `rustdoc_types`, while the "versioned" branch is for the
+/// specified version (v44) and later.
+/// 
+/// # Example
+/// 
+/// ```
+/// use rustdoc_types_41 as current;
+/// use rustdoc_types_42 as up;
+/// 
+/// use migrate_rustdoc_types::impl_unchanged_migrations;
+/// 
+/// impl_unchanged_migrations! {
+///     Crate,
+///     Constant,
+///     // ...
+/// }
+/// ```
 #[macro_export]
-macro_rules! impl_migrations {
+macro_rules! impl_unchanged_migrations {
     // A custom `Crate` implementation that updates `format_version`.
     { Crate, $($tt:tt)* } => {
         impl $crate::migrate::MigrateUp for current::Crate {
@@ -29,9 +55,9 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
-    { CrateV44, $($tt:tt)* } => {
+    { Crate@v44, $($tt:tt)* } => {
         impl $crate::migrate::MigrateUp for current::Crate {
             type Up = up::Crate;
 
@@ -61,12 +87,12 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
 
     // All structs, sorted alphabetically
     { AssocItemConstraint, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct AssocItemConstraint {
                 name,
                 args,
@@ -74,10 +100,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Constant, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Constant {
                 expr,
                 value,
@@ -85,40 +111,40 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Deprecation, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Deprecation {
                 since,
                 note,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Discriminant, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Discriminant {
                 expr,
                 value,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { DynTrait, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct DynTrait {
                 traits,
                 lifetime,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Enum, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Enum {
                 generics,
                 has_stripped_variants,
@@ -127,20 +153,20 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { ExternalCrate, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct ExternalCrate {
                 name,
                 html_root_url,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Function, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Function {
                 sig,
                 generics,
@@ -149,10 +175,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { FunctionHeader, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct FunctionHeader {
                 is_const,
                 is_unsafe,
@@ -161,10 +187,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { FunctionPointer, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct FunctionPointer {
                 sig,
                 generic_params,
@@ -172,10 +198,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { FunctionSignature, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct FunctionSignature {
                 inputs,
                 output,
@@ -183,37 +209,37 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { GenericParamDef, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct GenericParamDef {
                 name,
                 kind,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Generics, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Generics {
                 params,
                 where_predicates,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Id, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Id(id);
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Impl, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Impl {
                 is_unsafe,
                 generics,
@@ -227,10 +253,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Item, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Item {
                 id,
                 crate_id,
@@ -245,10 +271,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { ItemSummary, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct ItemSummary {
                 crate_id,
                 path,
@@ -256,10 +282,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Module, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Module {
                 is_crate,
                 items,
@@ -267,10 +293,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Path, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Path {
                 path,
                 id,
@@ -278,40 +304,40 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { PolyTrait, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct PolyTrait {
                 trait_,
                 generic_params,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Primitive, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Primitive {
                 name,
                 impls,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { ProcMacro, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct ProcMacro {
                 kind,
                 helpers,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Span, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Span {
                 filename,
                 begin,
@@ -319,10 +345,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Static, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Static {
                 type_,
                 is_mutable,
@@ -331,10 +357,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Struct, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Struct {
                 kind,
                 generics,
@@ -342,20 +368,20 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Target, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Target {
                 triple,
                 target_features,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { TargetFeature, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct TargetFeature {
                 name,
                 implies_features,
@@ -364,10 +390,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Trait, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Trait {
                 is_auto,
                 is_unsafe,
@@ -379,30 +405,30 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { TraitAlias, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct TraitAlias {
                 generics,
                 params,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { TypeAlias, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct TypeAlias {
                 type_,
                 generics,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Union, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Union {
                 generics,
                 has_stripped_fields,
@@ -411,10 +437,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Use, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Use {
                 source,
                 name,
@@ -424,22 +450,22 @@ macro_rules! impl_migrations {
 
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Variant, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             struct Variant {
                 kind,
                 discriminant,
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
 
     // All enums, sorted alphabetically
     { Abi, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum Abi {
                 "struct" {
                     C { unwind },
@@ -460,10 +486,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { AssocItemConstraintKind, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum AssocItemConstraintKind {
                 "tuple" {
                     Equality(term),
@@ -472,10 +498,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { GenericArg, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum GenericArg {
                 "tuple" {
                     Lifetime(string),
@@ -488,10 +514,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { GenericArgs, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum GenericArgs {
                 "struct" {
                     AngleBracketed {
@@ -506,10 +532,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
-    { GenericArgsV42, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+    { GenericArgs@v42, $($tt:tt)* } => {
+        $crate::impl_single_unchanged_migration! {
             enum GenericArgs {
                 "struct" {
                     AngleBracketed {
@@ -527,10 +553,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { GenericBound, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum GenericBound {
                 "struct" {
                     TraitBound {
@@ -546,10 +572,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { GenericParamDefKind, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum GenericParamDefKind {
                 "struct" {
                     Lifetime {
@@ -568,10 +594,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { ItemEnum, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum ItemEnum {
                 "struct" {
                     ExternCrate {
@@ -616,10 +642,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { ItemKind, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum ItemKind {
                 "unit" {
                     Module,
@@ -649,10 +675,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { MacroKind, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum MacroKind {
                 "unit" {
                     Bang,
@@ -662,10 +688,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { PreciseCapturingArg, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum PreciseCapturingArg {
                 "tuple" {
                     Lifetime(string),
@@ -674,10 +700,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { StructKind, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum StructKind {
                 "struct" {
                     Plain {
@@ -694,10 +720,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Term, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum Term {
                 "tuple" {
                     Type(type_),
@@ -706,10 +732,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { TraitBoundModifier, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum TraitBoundModifier {
                 "unit" {
                     None,
@@ -719,10 +745,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Type, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum Type {
                 "struct" {
                     Array {
@@ -766,10 +792,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { VariantKind, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum VariantKind {
                 "struct" {
                     Struct {
@@ -786,10 +812,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Visibility, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum Visibility {
                 "struct" {
                     Restricted {
@@ -805,10 +831,10 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { WherePredicate, $($tt:tt)* } => {
-        $crate::impl_single_migration! {
+        $crate::impl_single_unchanged_migration! {
             enum WherePredicate {
                 "struct" {
                     BoundPredicate {
@@ -828,14 +854,74 @@ macro_rules! impl_migrations {
             }
         }
 
-        $crate::impl_migrations! { $($tt)* }
+        $crate::impl_unchanged_migrations! { $($tt)* }
     };
 
     {} => {};
 }
 
+/// Implements [`MigrateUp`](crate::migrate::MigrateUp) for a single type that does not change in
+/// this version.
+/// 
+/// You likely want to use [`impl_unchanged_migrations!`] instead of this macro.
+/// 
+/// This macro uses a pseudo-Rust DSL that specifies the type kind, field names, and variant names
+/// of a type.
+/// 
+/// # Examples
+/// 
+/// ```
+/// use rustdoc_types_41 as current;
+/// use rustdoc_types_42 as up;
+/// 
+/// use migrate_rustdoc_types::impl_single_unchanged_migration;
+/// 
+/// impl_single_unchanged_migration! {
+///     struct NamedStruct {
+///         field_a,
+///         field_b,
+///     }
+/// }
+/// ```
+/// 
+/// ```
+/// use rustdoc_types_41 as current;
+/// use rustdoc_types_42 as up;
+/// 
+/// use migrate_rustdoc_types::impl_single_unchanged_migration;
+/// 
+/// impl_single_unchanged_migration! {
+///     struct NamedTuple(field_a, field_b);
+/// }
+/// ```
+/// 
+/// ```
+/// use rustdoc_types_41 as current;
+/// use rustdoc_types_42 as up;
+/// 
+/// use migrate_rustdoc_types::impl_single_unchanged_migration;
+/// 
+/// impl_single_unchanged_migration! {
+///     enum Enum {
+///         // Note that order matters here.
+///         "struct" {
+///             StructVariant {
+///                 field_a,
+///                 field_b,
+///             },
+///         },
+///         "tuple" {
+///             TupleVariantA(field_c, field_d),
+///             TupleVariantB(field_e, field_f),
+///         },
+///         "unit" {
+///             UnitVariant,
+///         },
+///     }
+/// }
+/// ```
 #[macro_export]
-macro_rules! impl_single_migration {
+macro_rules! impl_single_unchanged_migration {
     {
         struct $struct:ident {
             $($field:ident),* $(,)?
@@ -925,6 +1011,21 @@ macro_rules! impl_single_migration {
     };
 }
 
+/// Declares the `migrate_up()` function for a given migration.
+/// 
+/// This macro accepts two parameter: the format version of the current `rustdoc_types` and the
+/// format version of the migrated `rustdoc_types`.
+/// 
+/// # Example
+/// 
+/// ```
+/// use rustdoc_types_41 as current;
+/// use rustdoc_types_42 as up;
+/// 
+/// use migrate_rustdoc_types::declare_migrate_up;
+/// 
+/// declare_migrate_up!(41, 42);
+/// ```
 #[macro_export]
 macro_rules! declare_migrate_up {
     ($current:literal, $up:literal) => {
@@ -952,6 +1053,18 @@ macro_rules! declare_migrate_up {
     };
 }
 
+/// Declares the `serialize()` and `deserialize()` functions for a given migration.
+/// 
+/// # Example
+/// 
+/// ```
+/// use rustdoc_types_41 as current;
+/// use rustdoc_types_42 as up;
+/// 
+/// use migrate_rustdoc_types::declare_serialize_deserialize;
+/// 
+/// declare_serialize_deserialize!();
+/// ```
 #[macro_export]
 macro_rules! declare_serialize_deserialize {
     () => {

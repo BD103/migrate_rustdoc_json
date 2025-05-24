@@ -25,10 +25,10 @@ impl MigrateUp for current::Span {
     }
 }
 
-crate::impl_migrations! {
+crate::impl_unchanged_migrations! {
     AssocItemConstraint,
     Constant,
-    CrateV44,
+    Crate@v44,
     Deprecation,
     Discriminant,
     DynTrait,
@@ -62,7 +62,7 @@ crate::impl_migrations! {
     Abi,
     AssocItemConstraintKind,
     GenericArg,
-    GenericArgsV42,
+    GenericArgs@v42,
     GenericBound,
     GenericParamDefKind,
     ItemEnum,
