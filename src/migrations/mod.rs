@@ -1,14 +1,16 @@
 //! All migrations currently implemented by this crate.
 
+use crate::untyped_crate::UntypedCrate;
+
 mod v41;
 mod v42;
 mod v43;
 mod v44;
 mod v45;
 
-type MigrateUpFn = unsafe fn(*mut ()) -> *mut ();
-type DeserializeFn = fn(&str) -> *mut ();
-type SerializeFn = unsafe fn(*mut ()) -> String;
+type MigrateUpFn = fn(UntypedCrate) -> UntypedCrate;
+type DeserializeFn = fn(&str) -> UntypedCrate;
+type SerializeFn = fn(UntypedCrate) -> String;
 
 /// A function lookup table for migrating `rustdoc` JSON from one version to another.
 ///
@@ -242,26 +244,26 @@ pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
 
     for i in current_version..to_version {
         let migrate_up = MIGRATIONS[i as usize - 1].0;
-        crate_ = unsafe { (migrate_up)(crate_) };
+        crate_ = (migrate_up)(crate_);
     }
 
     let serialize = MIGRATIONS[to_version as usize - 1].2;
 
-    Ok(unsafe { (serialize)(crate_) })
+    Ok((serialize)(crate_))
 }
 
 /// Panics when called, displaying an error that the given migration isn't yet supported.
-fn unimplemented_migrate_up<const N: usize>(_: *mut ()) -> *mut () {
+fn unimplemented_migrate_up<const N: usize>(_: UntypedCrate) -> UntypedCrate {
     unimplemented_inner(N);
 }
 
 /// Panics when called, displaying an error that deserialization isn't yet supported.
-fn unimplemented_deserialize<const N: usize>(_: &str) -> *mut () {
+fn unimplemented_deserialize<const N: usize>(_: &str) -> UntypedCrate {
     unimplemented_inner(N);
 }
 
 /// Panics when called, displaying an error that serialization isn't yet supported.
-fn unimplemented_serialize<const N: usize>(_: *mut ()) -> String {
+fn unimplemented_serialize<const N: usize>(_: UntypedCrate) -> String {
     unimplemented_inner(N);
 }
 

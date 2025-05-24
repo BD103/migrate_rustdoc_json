@@ -1040,17 +1040,15 @@ macro_rules! declare_migrate_up {
         ///
         #[doc = concat!("The returned raw pointer is a [`rustdoc_types_", $up, "::Crate`] put in a [`Box`] then converted to a")]
         /// raw pointer with [`Box::into_raw()`].
-        pub unsafe fn migrate_up(current_crate: *mut ()) -> *mut () {
+        pub fn migrate_up(current_crate: $crate::untyped_crate::UntypedCrate) -> $crate::untyped_crate::UntypedCrate {
+            use $crate::untyped_crate::UntypedCrate;
             use $crate::traits::MigrateUp;
-            use ::std::boxed::Box;
 
-            let current_crate = unsafe {
-                Box::from_raw(current_crate.cast::<current::Crate>())
-            };
+            let current_crate = current_crate.into_crate::<current::Crate>();
 
-            let up_crate = Box::new((*current_crate).migrate_up());
+            let up_crate = (*current_crate).migrate_up();
 
-            Box::into_raw(up_crate).cast::<()>()
+            UntypedCrate::new(up_crate)
         }
     };
 }
@@ -1070,17 +1068,16 @@ macro_rules! declare_migrate_up {
 #[macro_export]
 macro_rules! declare_serialize_deserialize {
     () => {
-        pub fn deserialize(current_crate: &str) -> *mut () {
-            use ::std::boxed::Box;
+        pub fn deserialize(current_crate: &str) -> $crate::untyped_crate::UntypedCrate {
+            use $crate::untyped_crate::UntypedCrate;
 
             let current_crate: current::Crate = ::serde_json::from_str(current_crate).unwrap();
-            let current_crate = Box::new(current_crate);
 
-            Box::into_raw(current_crate).cast::<()>()
+            UntypedCrate::new(current_crate)
         }
 
-        pub unsafe fn serialize(current_crate: *mut ()) -> String {
-            let current_crate = unsafe { Box::from_raw(current_crate.cast::<current::Crate>()) };
+        pub fn serialize(current_crate: $crate::untyped_crate::UntypedCrate) -> String {
+            let current_crate = current_crate.into_crate::<current::Crate>();
 
             ::serde_json::to_string(current_crate.as_ref()).unwrap()
         }
