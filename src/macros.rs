@@ -1,6 +1,6 @@
 //! The macros used by this crate.
 
-/// Implements [`MigrateUp`](crate::migrate::MigrateUp) for `rustdoc_types` types that do not
+/// Implements [`MigrateUp`](crate::traits::MigrateUp) for `rustdoc_types` types that do not
 /// change in this version.
 ///
 /// This macro requires that you import the current version of `rustdoc_types` as the name
@@ -30,7 +30,7 @@
 macro_rules! impl_unchanged_migrations {
     // A custom `Crate` implementation that updates `format_version`.
     { Crate, $($tt:tt)* } => {
-        impl $crate::migrate::MigrateUp for current::Crate {
+        impl $crate::traits::MigrateUp for current::Crate {
             type Up = up::Crate;
 
             fn migrate_up(self) -> Self::Up {
@@ -60,7 +60,7 @@ macro_rules! impl_unchanged_migrations {
         $crate::impl_unchanged_migrations! { $($tt)* }
     };
     { Crate@v44, $($tt:tt)* } => {
-        impl $crate::migrate::MigrateUp for current::Crate {
+        impl $crate::traits::MigrateUp for current::Crate {
             type Up = up::Crate;
 
             fn migrate_up(self) -> Self::Up {
@@ -862,7 +862,7 @@ macro_rules! impl_unchanged_migrations {
     {} => {};
 }
 
-/// Implements [`MigrateUp`](crate::migrate::MigrateUp) for a single type that does not change in
+/// Implements [`MigrateUp`](crate::traits::MigrateUp) for a single type that does not change in
 /// this version.
 ///
 /// You likely want to use [`impl_unchanged_migrations!`] instead of this macro.
@@ -929,7 +929,7 @@ macro_rules! impl_single_unchanged_migration {
             $($field:ident),* $(,)?
         }
     } => {
-        impl $crate::migrate::MigrateUp for current::$struct {
+        impl $crate::traits::MigrateUp for current::$struct {
             type Up = up::$struct;
 
             fn migrate_up(self) -> Self::Up {
@@ -946,7 +946,7 @@ macro_rules! impl_single_unchanged_migration {
     {
         struct $struct:ident($($field:ident),*);
     } => {
-        impl $crate::migrate::MigrateUp for current::$struct {
+        impl $crate::traits::MigrateUp for current::$struct {
             type Up = up::$struct;
 
             fn migrate_up(self) -> Self::Up {
@@ -985,7 +985,7 @@ macro_rules! impl_single_unchanged_migration {
             )?
         }
     } => {
-        impl $crate::migrate::MigrateUp for current::$enum {
+        impl $crate::traits::MigrateUp for current::$enum {
             type Up = up::$enum;
 
             fn migrate_up(self) -> Self::Up {
@@ -1041,7 +1041,7 @@ macro_rules! declare_migrate_up {
         #[doc = concat!("The returned raw pointer is a [`rustdoc_types_", $up, "::Crate`] put in a [`Box`] then converted to a")]
         /// raw pointer with [`Box::into_raw()`].
         pub unsafe fn migrate_up(current_crate: *mut ()) -> *mut () {
-            use $crate::migrate::MigrateUp;
+            use $crate::traits::MigrateUp;
             use ::std::boxed::Box;
 
             let current_crate = unsafe {

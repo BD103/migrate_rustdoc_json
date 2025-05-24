@@ -2,9 +2,10 @@ use anyhow::Context;
 
 mod args;
 mod macros;
-mod migrate;
 mod migrations;
 mod primitives;
+mod traits;
+mod untyped_crate;
 mod version;
 
 fn main() -> anyhow::Result<()> {

@@ -1,7 +1,7 @@
 use rustdoc_types_44 as current;
 use rustdoc_types_45 as up;
 
-use crate::{declare_migrate_up, declare_serialize_deserialize, migrate::MigrateUp};
+use crate::{declare_migrate_up, declare_serialize_deserialize, traits::MigrateUp};
 
 declare_migrate_up!(44, 45);
 declare_serialize_deserialize!();

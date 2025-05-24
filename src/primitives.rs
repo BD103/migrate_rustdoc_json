@@ -6,7 +6,7 @@ use std::{
     path::PathBuf,
 };
 
-use crate::migrate::MigrateUp;
+use crate::traits::MigrateUp;
 
 /// Implements [`MigrateUp`] for types that are not versioned, usually because they are not within
 /// `rustdoc_types`.
@@ -17,7 +17,7 @@ macro_rules! impl_unversioned_migrations {
         $($primitive:path),*
     } => {
         $(
-            impl $crate::migrate::MigrateUp for $primitive {
+            impl $crate::traits::MigrateUp for $primitive {
                 type Up = Self;
 
                 fn migrate_up(self) -> Self::Up {
