@@ -1,14 +1,19 @@
+use anyhow::Context;
+
 mod args;
 mod migrate;
 mod migrations;
 mod version;
 
-fn main() {
-    let args = args::parse_args().unwrap();
+fn main() -> anyhow::Result<()> {
+    let args = args::parse_args()?;
 
-    let input = std::fs::read_to_string(&args.input).unwrap();
+    let input = std::fs::read_to_string(&args.input)
+        .with_context(|| format!("could not read `--input` file: {}", args.input.display()))?;
 
-    let output = self::migrations::migrate_up(&input, args.to_version);
+    let output = self::migrations::migrate_up(&input, args.to_version)?;
 
     println!("{output}");
+
+    Ok(())
 }

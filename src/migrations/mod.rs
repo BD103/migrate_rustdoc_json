@@ -223,13 +223,15 @@ static MIGRATIONS: [(MigrateUpFn, DeserializeFn, SerializeFn); 45] = [
     ),
 ];
 
-pub fn migrate_up(current: &str, to_version: u32) -> String {
-    let current_version = crate::version::detect_version(current);
+pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
+    let current_version = crate::version::detect_version(current)?;
 
-    assert!(
-        current_version <= to_version,
-        "downgrading is not yet supported"
-    );
+    if current_version > to_version {
+        return Err(anyhow::anyhow!(
+            "`--input` format version {current_version} is greater than `--to-version` {to_version}"
+        )
+        .context("downgrading to an older format version is not supported"));
+    }
 
     let deserialize = MIGRATIONS[current_version as usize - 1].1;
 
@@ -242,7 +244,7 @@ pub fn migrate_up(current: &str, to_version: u32) -> String {
 
     let serialize = MIGRATIONS[to_version as usize - 1].2;
 
-    unsafe { (serialize)(crate_) }
+    Ok(unsafe { (serialize)(crate_) })
 }
 
 /// Panics when called, displaying an error that the given migration isn't yet supported.

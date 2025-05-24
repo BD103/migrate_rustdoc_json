@@ -1,4 +1,4 @@
-use std::{convert::Infallible, path::PathBuf};
+use std::{convert::Infallible, ffi::OsStr, path::PathBuf};
 
 #[derive(Debug)]
 pub struct Args {
@@ -6,7 +6,7 @@ pub struct Args {
     pub to_version: u32,
 }
 
-pub fn parse_args() -> Result<Args, pico_args::Error> {
+pub fn parse_args() -> anyhow::Result<Args> {
     let mut pico_args = pico_args::Arguments::from_env();
 
     let args = Args {
@@ -17,7 +17,12 @@ pub fn parse_args() -> Result<Args, pico_args::Error> {
     };
 
     let remaining = pico_args.finish();
-    assert!(remaining.is_empty());
+
+    anyhow::ensure!(
+        remaining.is_empty(),
+        "unsupported arguments were passed: {}",
+        remaining.join(OsStr::new(", ")).to_string_lossy()
+    );
 
     Ok(args)
 }
