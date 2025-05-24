@@ -1,10 +1,10 @@
 //! All migrations currently implemented by this crate.
 
-mod _41;
-mod _42;
-mod _43;
-mod _44;
-mod _45;
+mod v41;
+mod v42;
+mod v43;
+mod v44;
+mod v45;
 
 type MigrateUpFn = unsafe fn(*mut ()) -> *mut ();
 type DeserializeFn = fn(&str) -> *mut ();
@@ -214,14 +214,15 @@ static MIGRATIONS: [(MigrateUpFn, DeserializeFn, SerializeFn); 45] = [
         unimplemented_deserialize::<40>,
         unimplemented_serialize::<40>,
     ),
-    (_41::migrate_up, _41::deserialize, _41::serialize),
-    (_42::migrate_up, _42::deserialize, _42::serialize),
-    (_43::migrate_up, _43::deserialize, _43::serialize),
-    (_44::migrate_up, _44::deserialize, _44::serialize),
+    (v41::migrate_up, v41::deserialize, v41::serialize),
+    (v42::migrate_up, v42::deserialize, v42::serialize),
+    (v43::migrate_up, v43::deserialize, v43::serialize),
+    (v44::migrate_up, v44::deserialize, v44::serialize),
     (
+        // v46 does not exist yet, so we cannot migrate up past v45.
         unimplemented_migrate_up::<45>,
-        _45::deserialize,
-        _45::serialize,
+        v45::deserialize,
+        v45::serialize,
     ),
 ];
 
