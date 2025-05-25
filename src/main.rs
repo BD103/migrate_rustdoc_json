@@ -23,7 +23,7 @@ fn main() -> ExitCode {
                 .bold()
                 .fg_color(Some(Color::Ansi(AnsiColor::BrightRed)));
 
-            eprintln!("{style}Error{style:#}: {error:?}");
+            eprintln!("(._.;) {style}Error{style:#}: {error:?}");
 
             ExitCode::FAILURE
         }
@@ -38,6 +38,12 @@ fn migrate_rustdoc_types() -> anyhow::Result<()> {
         .with_context(|| format!("could not read `--input` file: {}", args.input.display()))?;
 
     let output = self::migrations::migrate_up(&input, args.to_version)?;
+
+    {
+        let blue = Style::new().fg_color(Some(Color::Ansi(AnsiColor::Blue)));
+
+        eprintln!("{blue}Done!{blue:#} :D");
+    }
 
     println!("{output}");
 

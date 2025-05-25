@@ -1,5 +1,8 @@
 //! All migrations currently implemented by this crate.
 
+use anstream::eprintln;
+use anstyle::{AnsiColor, Color, Style};
+
 use crate::untyped_crate::UntypedCrate;
 
 mod v41;
@@ -240,11 +243,30 @@ pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
 
     let deserialize = MIGRATIONS[current_version as usize - 1].1;
 
+    {
+        let blue = Style::new().fg_color(Some(Color::Ansi(AnsiColor::Blue)));
+        let bold = Style::new().bold();
+
+        eprintln!(
+            "{blue}Migrating JSON with format version {bold}v{current_version}{bold:#}{blue:#}"
+        );
+    }
+
     // Convert the JSON string into an `UntypedCrate`.
     let mut crate_ = (deserialize)(current);
 
     for i in current_version..to_version {
         let migrate_up = MIGRATIONS[i as usize - 1].0;
+
+        {
+            let dim = Style::new().dimmed().italic();
+            let blue = Style::new()
+                .fg_color(Some(Color::Ansi(AnsiColor::Blue)))
+                .bold()
+                .italic();
+
+            eprintln!("\t{dim}...to{dim:#} {blue}v{}{blue:#}", i + 1);
+        }
 
         // Migrate the `UntypedCrate` through all versions between the input and the desired
         // version.
