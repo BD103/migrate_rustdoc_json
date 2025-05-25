@@ -11,9 +11,9 @@ mod v43;
 mod v44;
 mod v45;
 
-type MigrateUpFn = fn(UntypedCrate) -> UntypedCrate;
-type DeserializeFn = fn(&str) -> UntypedCrate;
-type SerializeFn = fn(UntypedCrate) -> String;
+type MigrateUpFn = fn(UntypedCrate) -> anyhow::Result<UntypedCrate>;
+type DeserializeFn = fn(&str) -> anyhow::Result<UntypedCrate>;
+type SerializeFn = fn(UntypedCrate) -> anyhow::Result<String>;
 
 /// A function lookup table for migrating `rustdoc` JSON from one version to another.
 ///
@@ -253,7 +253,7 @@ pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
     }
 
     // Convert the JSON string into an `UntypedCrate`.
-    let mut crate_ = (deserialize)(current);
+    let mut crate_ = (deserialize)(current)?;
 
     for i in current_version..to_version {
         let migrate_up = MIGRATIONS[i as usize - 1].0;
@@ -270,44 +270,44 @@ pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
 
         // Migrate the `UntypedCrate` through all versions between the input and the desired
         // version.
-        crate_ = (migrate_up)(crate_);
+        crate_ = (migrate_up)(crate_)?;
     }
 
     let serialize = MIGRATIONS[to_version as usize - 1].2;
 
     // Convert the `UntypedCrate` back to a JSON string.
-    Ok((serialize)(crate_))
+    (serialize)(crate_)
 }
 
 /// Panics when called, displaying an error that the given migration isn't yet supported.
-fn unimplemented_migrate_up<const N: usize>(_: UntypedCrate) -> UntypedCrate {
-    fn inner(n: usize) -> UntypedCrate {
-        unimplemented!(
+fn unimplemented_migrate_up<const N: usize>(_: UntypedCrate) -> anyhow::Result<UntypedCrate> {
+    fn inner(n: usize) -> anyhow::Result<UntypedCrate> {
+        Err(anyhow::anyhow!(
             "migrating from format version v{} to format version v{} is not yet supported",
             n,
             n + 1,
-        );
+        ))
     }
 
     inner(N)
 }
 
-/// Panics when called, displaying an error that deserialization isn't yet supported.
-fn unimplemented_deserialize<const N: usize>(_: &str) -> UntypedCrate {
-    fn inner(n: usize) -> UntypedCrate {
-        unimplemented!("format version v{n} is not yet supported");
+/// Errors when called, displaying an error that deserialization isn't yet supported.
+fn unimplemented_deserialize<const N: usize>(_: &str) -> anyhow::Result<UntypedCrate> {
+    fn inner(n: usize) -> anyhow::Result<UntypedCrate> {
+        Err(anyhow::anyhow!("format version v{n} is not yet supported"))
     }
 
     inner(N)
 }
 
 /// Panics when called, displaying an error that serialization should be supported but isn't.
-fn unimplemented_serialize<const N: usize>(_: UntypedCrate) -> String {
+fn unimplemented_serialize<const N: usize>(_: UntypedCrate) -> anyhow::Result<String> {
     fn inner(n: usize) -> String {
         // This is unreachable because if we support migrating to this version, we should support
         // serializing it as well.
         unreachable!("unable to convert `Crate` format version v{n} to JSON");
     }
 
-    inner(N)
+    Ok(inner(N))
 }
