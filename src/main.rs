@@ -1,3 +1,7 @@
+use std::process::ExitCode;
+
+use anstream::{eprintln, println};
+use anstyle::{AnsiColor, Color, Style};
 use anyhow::Context;
 
 mod args;
@@ -8,7 +12,26 @@ mod traits;
 mod untyped_crate;
 mod version;
 
-fn main() -> anyhow::Result<()> {
+/// The main entrypoint with a custom error handler.
+///
+/// For the program logic, see [`migrate_rustdoc_types()`].
+fn main() -> ExitCode {
+    match migrate_rustdoc_types() {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(error) => {
+            let style = Style::new()
+                .bold()
+                .fg_color(Some(Color::Ansi(AnsiColor::BrightRed)));
+
+            eprintln!("{style}Error{style:#}: {error:?}");
+
+            ExitCode::FAILURE
+        }
+    }
+}
+
+/// The main program logic.
+fn migrate_rustdoc_types() -> anyhow::Result<()> {
     let args = args::parse_args()?;
 
     let input = std::fs::read_to_string(&args.input)
