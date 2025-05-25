@@ -1,3 +1,8 @@
+//! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0390---2025-03-24>
+//! 
+//! Currently attributes are left as-is in their debug format. We may be able to reformat them into
+//! their pretty-printed variants.
+
 use rustdoc_types_42 as current;
 use rustdoc_types_43 as up;
 

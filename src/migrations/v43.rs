@@ -1,3 +1,5 @@
+//! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0400---2025-04-19>
+
 use rustdoc_types_43 as current;
 use rustdoc_types_44 as up;
 
@@ -29,6 +31,8 @@ impl MigrateUp for current::Crate {
             paths: paths.migrate_up(),
             external_crates: external_crates.migrate_up(),
             target: up::Target {
+                // Currently we leave the target triple empty, as we can only guess if the JSON was
+                // built on the same device migrating it.
                 triple: String::new(),
                 target_features: Vec::new(),
             },

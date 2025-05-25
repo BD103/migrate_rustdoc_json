@@ -1,3 +1,5 @@
+//! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0410---2025-04-20>
+
 use rustdoc_types_44 as current;
 use rustdoc_types_45 as up;
 
@@ -51,8 +53,8 @@ crate::impl_unchanged_migrations! {
     ProcMacro,
     Static,
     Struct,
-    Target,
-    TargetFeature,
+    Target@v44,
+    TargetFeature@v44,
     Trait,
     TraitAlias,
     TypeAlias,

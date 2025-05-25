@@ -1,3 +1,5 @@
+//! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0380---2025-03-16>
+
 use rustdoc_types_41 as current;
 use rustdoc_types_42 as up;
 

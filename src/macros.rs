@@ -372,7 +372,7 @@ macro_rules! impl_unchanged_migrations {
 
         $crate::impl_unchanged_migrations! { $($tt)* }
     };
-    { Target, $($tt:tt)* } => {
+    { Target@v44, $($tt:tt)* } => {
         $crate::impl_single_unchanged_migration! {
             struct Target {
                 triple,
@@ -382,7 +382,7 @@ macro_rules! impl_unchanged_migrations {
 
         $crate::impl_unchanged_migrations! { $($tt)* }
     };
-    { TargetFeature, $($tt:tt)* } => {
+    { TargetFeature@v44, $($tt:tt)* } => {
         $crate::impl_single_unchanged_migration! {
             struct TargetFeature {
                 name,
