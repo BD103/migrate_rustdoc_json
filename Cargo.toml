@@ -2,4 +2,5 @@
 resolver = "3"
 members = [
     "migrate_rustdoc_types",
+    "deterministic_rustdoc_types",
 ]
