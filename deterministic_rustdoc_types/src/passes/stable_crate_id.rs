@@ -88,3 +88,96 @@ fn new_external_crates(
 
     new_external_crates
 }
+
+mod tests {
+    use serde_json::json;
+
+    use super::*;
+
+    #[test]
+    fn test_sorted_old_ids() {
+        let old_external_crates = json!({
+            // Single crate, no URL
+            "1": {
+                "name": "a",
+                "html_root_url": null
+            },
+            // Single crate, URL
+            "6": {
+                "name": "e",
+                "html_root_url": "https://doc.rust-lang.org/stable/",
+            },
+            // Duplicate crates, different URL
+            "7": {
+                "name": "c",
+                "html_root_url": "https://doc.rust-lang.org/nightly/"
+            },
+            "2": {
+                "name": "c",
+                "html_root_url": "https://doc.rust-lang.org/stable/"
+            },
+            // Duplicate crates, one without a URL
+            "5": {
+                "name": "b",
+                "html_root_url": "https://doc.rust-lang.org/nightly/"
+            },
+            "8": {
+                "name": "b",
+                "html_root_url": null
+            },
+            // Duplicate crates, no URLs
+            "4": {
+                "name": "d",
+                "html_root_url": null
+            },
+            "3": {
+                "name": "d",
+                "html_root_url": null
+            },
+        });
+
+        let sorted_old_ids = sorted_old_ids(old_external_crates.as_object().unwrap());
+
+        let expected = [
+            ("a", None, 1),
+            ("b", None, 8),
+            ("b", Some("https://doc.rust-lang.org/nightly/"), 5),
+            ("c", Some("https://doc.rust-lang.org/nightly/"), 7),
+            ("c", Some("https://doc.rust-lang.org/stable/"), 2),
+            ("d", None, 3),
+            ("d", None, 4),
+            ("e", Some("https://doc.rust-lang.org/stable/"), 6),
+        ];
+
+        assert_eq!(sorted_old_ids, expected);
+    }
+
+    #[test]
+    fn test_id_map() {
+        let sorted_old_ids = vec![
+            ("a", None, 1),
+            ("b", None, 8),
+            ("b", Some("https://doc.rust-lang.org/nightly/"), 5),
+            ("c", Some("https://doc.rust-lang.org/nightly/"), 7),
+            ("c", Some("https://doc.rust-lang.org/stable/"), 2),
+            ("d", None, 3),
+            ("d", None, 4),
+            ("e", Some("https://doc.rust-lang.org/stable/"), 6),
+        ];
+
+        let id_map: Vec<_> = id_map(sorted_old_ids).into_iter().collect();
+
+        let expected = [
+            (1, 1),
+            (2, 5),
+            (3, 6),
+            (4, 7),
+            (5, 3),
+            (6, 8),
+            (7, 4),
+            (8, 2),
+        ];
+
+        assert_eq!(id_map, expected);
+    }
+}
