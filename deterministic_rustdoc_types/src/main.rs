@@ -18,6 +18,7 @@ fn main() -> anyhow::Result<()> {
     }
 
     self::passes::remove_target::pass(&mut value);
+    self::passes::stable_crate_id::pass(&mut value)?;
 
     let out = serde_json::to_string(&value)?;
 
