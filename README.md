@@ -1,6 +1,19 @@
-# `rustdoc_types` Utilities
+# Migrate `rustdoc_types`
 
-This repository is a collection of CLI utilities for managing `rustdoc`'s [unstable JSON output](https://doc.rust-lang.org/stable/rustdoc/unstable-features.html#json).
+Migrates `rustdoc` JSON from one format version to another.
 
-- [`migrate_rustdoc_types`](migrate_rustdoc_types/README.md): Migrate `rustdoc` JSON from one format version to another.
-- [`deterministic_rustdoc_types`](deterministic_rustdoc_types/README.md) (WIP 🚧): Modify `rustdoc` JSON to be deterministic, making it suitable for snapshot testing.
+## Installation
+
+```sh
+cargo install --git https://github.com/BD103/migrate_rustdoc_types migrate_rustdoc_types
+```
+
+## Quick Start
+
+```sh
+# Build `rustdoc` JSON for a crate.
+cargo +nightly rustdoc -- -Zunstable-options --output-format json
+
+# Migrate the `rustdoc` JSON to a newer format version.
+migrate_rustdoc_types --input target/doc/crate_name.json --to-version 45 > migrated.json
+```
