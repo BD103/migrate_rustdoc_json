@@ -1,7 +1,11 @@
 [package]
 name = "migrate_rustdoc_types"
 version = "0.1.0"
+authors = ["BD103"]
 edition = "2024"
+description = "Migrate `rustdoc` JSON from one format version to another"
+repository = "https://github.com/BD103/migrate_rustdoc_types"
+license = "MIT OR Apache-2.0"
 
 [dependencies]
 # CLI argument parsing
