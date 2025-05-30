@@ -9,6 +9,7 @@ use anyhow::Context;
 
 static TOOLCHAINS: LazyLock<BTreeMap<u32, &'static str>> = LazyLock::new(|| {
     let toolchains = [
+        (42, "nightly-2025-03-22"),
         (43, "nightly-2025-04-18"),
         (44, "nightly-2025-04-19"),
         (45, "nightly-2025-04-20"),

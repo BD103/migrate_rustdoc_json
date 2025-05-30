@@ -6,6 +6,19 @@ use serde_json::{Value, json};
 use utils::{generate_and_migrate_to, needs_toolchain, query_both};
 
 #[test]
+fn v42() {
+    let ControlFlow::Continue(()) = needs_toolchain(42) else {
+        return;
+    };
+
+    let (mut source_json, migrated_json) = generate_and_migrate_to("tests/v42/v42.rs", 42, 43);
+
+    source_json["format_version"] = Value::from(43);
+
+    assert_eq!(source_json, migrated_json);
+}
+
+#[test]
 fn v43() {
     let ControlFlow::Continue(()) = needs_toolchain(43) else {
         return;
