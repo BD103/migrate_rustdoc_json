@@ -7,10 +7,55 @@ use std::{
     process::Command,
 };
 
-use jsonpath_rust::query::QueryRef;
+use jsonpath_rust::JsonPath;
 use serde_json::Value;
 
-pub fn generate_json(source: &Path, format_version: u32) -> PathBuf {
+pub fn generate_and_migrate_to(
+    source: impl AsRef<Path>,
+    source_format_version: u32,
+    to_version: u32,
+) -> (Value, Value) {
+    let source_path = generate_json(source.as_ref(), source_format_version);
+    let migrated_path = migrate_json(&source_path, to_version);
+
+    let source_json = read_json(&source_path);
+    let migrated_json = read_json(&migrated_path);
+
+    (source_json, migrated_json)
+}
+
+pub fn query_both<'a, 'b>(
+    source_json: &'a Value,
+    migrated_json: &'b Value,
+    query: &str,
+) -> BTreeMap<String, (Option<&'a Value>, Option<&'b Value>)> {
+    let mut map = BTreeMap::new();
+
+    let source_query = source_json.query_with_path(query).unwrap();
+    let migrated_query = migrated_json.query_with_path(query).unwrap();
+
+    for q in source_query {
+        // We have to clone the `QueryRef` here because both methods take `self`, and not `&self`.
+        let path = q.clone().path();
+        let val = q.val();
+
+        map.insert(path, (Some(val), None));
+    }
+
+    for q in migrated_query {
+        // We have to clone the `QueryRef` here because both methods take `self`, and not `&self`.
+        let path = q.clone().path();
+        let val = q.val();
+
+        map.entry(path)
+            .and_modify(|(_source, migrated)| *migrated = Some(val))
+            .or_insert((None, Some(val)));
+    }
+
+    map
+}
+
+fn generate_json(source: &Path, format_version: u32) -> PathBuf {
     assert_eq!(
         source.extension(),
         Some(OsStr::new("rs")),
@@ -40,7 +85,7 @@ pub fn generate_json(source: &Path, format_version: u32) -> PathBuf {
     json_path
 }
 
-pub fn migrate_json(json: &Path, format_version: u32) -> PathBuf {
+fn migrate_json(json: &Path, format_version: u32) -> PathBuf {
     let program = Path::new(env!("CARGO_BIN_EXE_migrate_rustdoc_types"));
 
     assert!(program.is_file(), "`migrate_rustdoc_types` cannot be found");
@@ -76,23 +121,9 @@ fn json_path(source: &Path) -> PathBuf {
         .with_extension("json")
 }
 
-pub fn read_json(json: &Path) -> Value {
+fn read_json(json: &Path) -> Value {
     let file = File::open(json).unwrap();
     let buffer = BufReader::new(file);
 
     serde_json::from_reader(buffer).unwrap()
-}
-
-pub fn path_val_map(queries: Vec<QueryRef<'_, Value>>) -> BTreeMap<String, Value> {
-    let mut map = BTreeMap::new();
-
-    for query in queries {
-        // These clones are needed, unfortunately. :(
-        let path = query.clone().path();
-        let val = query.val().clone();
-
-        map.insert(path, val);
-    }
-
-    map
 }
