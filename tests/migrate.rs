@@ -2,8 +2,24 @@ mod utils;
 
 use std::ops::ControlFlow;
 
-use serde_json::Value;
-use utils::{generate_and_migrate_to, need, query_both};
+use serde_json::{Value, json};
+use utils::{generate_and_migrate_to, needs_toolchain, query_both};
+
+#[test]
+fn v43() {
+    let ControlFlow::Continue(()) = needs_toolchain(43) else {
+        return;
+    };
+
+    let (_, migrated_json) = generate_and_migrate_to("tests/v43/v43.rs", 43, 44);
+
+    let expected = json!({
+        "triple": "",
+        "target_features": [],
+    });
+
+    assert_eq!(migrated_json["target"], expected);
+}
 
 #[test]
 fn v44() {
