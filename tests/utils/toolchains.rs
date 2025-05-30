@@ -15,7 +15,7 @@ static TOOLCHAINS: LazyLock<BTreeMap<u32, &'static str>> = LazyLock::new(|| {
     BTreeMap::from(toolchains)
 });
 
-pub fn need(format_version: u32) -> ControlFlow<()> {
+pub fn needs_toolchain(format_version: u32) -> ControlFlow<()> {
     let install_toolchains = option_env!("INSTALL_TOOLCHAINS");
 
     match install_toolchains {

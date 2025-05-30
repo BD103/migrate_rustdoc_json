@@ -7,7 +7,7 @@ use utils::{generate_and_migrate_to, need, query_both};
 
 #[test]
 fn v44() {
-    let ControlFlow::Continue(()) = need(44) else {
+    let ControlFlow::Continue(()) = needs_toolchain(44) else {
         return;
     };
 
