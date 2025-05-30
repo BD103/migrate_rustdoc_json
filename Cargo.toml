@@ -28,3 +28,6 @@ rustdoc_types_42 = { version = "0.38", package = "rustdoc-types", features = ["r
 rustdoc_types_43 = { version = "0.39", package = "rustdoc-types", features = ["rustc-hash"] }
 rustdoc_types_44 = { version = "0.40", package = "rustdoc-types", features = ["rustc-hash"] }
 rustdoc_types_45 = { version = "0.41", package = "rustdoc-types", features = ["rustc-hash"] }
+
+[dev-dependencies]
+jsonpath-rust = "1.0.2"
