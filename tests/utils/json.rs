@@ -21,6 +21,9 @@ pub fn generate_and_migrate_to(
     let source_json = read_json(&source_path);
     let migrated_json = read_json(&migrated_path);
 
+    assert_eq!(source_json["format_version"], source_format_version);
+    assert_eq!(migrated_json["format_version"], to_version);
+
     (source_json, migrated_json)
 }
 
