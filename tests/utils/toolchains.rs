@@ -1,4 +1,9 @@
-use std::{collections::BTreeMap, ops::ControlFlow, process::Command, sync::LazyLock};
+use std::{
+    collections::BTreeMap,
+    ops::ControlFlow,
+    process::Command,
+    sync::{LazyLock, Mutex},
+};
 
 use anyhow::Context;
 
@@ -14,6 +19,8 @@ static TOOLCHAINS: LazyLock<BTreeMap<u32, &'static str>> = LazyLock::new(|| {
 
     BTreeMap::from(toolchains)
 });
+
+static RUSTUP_LOCK: Mutex<()> = Mutex::new(());
 
 pub fn needs_toolchain(format_version: u32) -> ControlFlow<()> {
     let install_toolchains = option_env!("INSTALL_TOOLCHAINS");
@@ -39,6 +46,8 @@ pub(super) fn get_toolchain(format_version: u32) -> &'static str {
 }
 
 fn install_toolchain_for_version(format_version: u32) {
+    let lock = RUSTUP_LOCK.lock().unwrap();
+
     let status = Command::new("rustup")
         .arg("toolchain")
         .arg("install")
@@ -46,6 +55,8 @@ fn install_toolchain_for_version(format_version: u32) {
         .arg(get_toolchain(format_version))
         .status()
         .unwrap();
+
+    drop(lock);
 
     assert!(
         status.success(),
@@ -55,12 +66,16 @@ fn install_toolchain_for_version(format_version: u32) {
 }
 
 fn uninstall_toolchain_for_version(format_version: u32) {
+    let lock = RUSTUP_LOCK.lock().unwrap();
+
     let status = Command::new("rustup")
         .arg("toolchain")
         .arg("uninstall")
         .arg(get_toolchain(format_version))
         .status()
         .unwrap();
+
+    drop(lock);
 
     if !status.success() {
         eprintln!(
