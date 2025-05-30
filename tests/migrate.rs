@@ -15,6 +15,7 @@ fn v42() {
 
     source_json["format_version"] = Value::from(43);
 
+    // TODO: Test `#[repr(...)]` migrating.
     assert_eq!(source_json, migrated_json);
 }
 
