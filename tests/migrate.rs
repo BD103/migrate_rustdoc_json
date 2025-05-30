@@ -2,6 +2,7 @@ mod utils;
 
 use std::ops::ControlFlow;
 
+use jsonpath_rust::JsonPath;
 use serde_json::{Value, json};
 use utils::{generate_and_migrate_to, needs_toolchain, query_both};
 
@@ -11,12 +12,54 @@ fn v42() {
         return;
     };
 
-    let (mut source_json, migrated_json) = generate_and_migrate_to("tests/v42/v42.rs", 42, 43);
+    let (_, migrated_json) = generate_and_migrate_to("tests/v42/v42.rs", 42, 43);
 
-    source_json["format_version"] = Value::from(43);
+    let query_expected = [
+        (
+            "$.index[?(@.name == 'ReprRust')].attrs",
+            json!(["#[attr = Repr([ReprRust])]\n"]),
+        ),
+        (
+            "$.index[?(@.name == 'ReprC')].attrs",
+            json!(["#[attr = Repr([ReprC])]\n"]),
+        ),
+        (
+            "$.index[?(@.name == 'ReprPacked1')].attrs",
+            json!(["#[attr = Repr([ReprPacked(Align(1 bytes))])]\n"]),
+        ),
+        (
+            "$.index[?(@.name == 'ReprPacked2')].attrs",
+            json!(["#[attr = Repr([ReprPacked(Align(2 bytes))])]\n"]),
+        ),
+        (
+            "$.index[?(@.name == 'ReprCAlign8')].attrs",
+            json!(["#[attr = Repr([ReprC, ReprAlign(Align(8 bytes))])]\n"]),
+        ),
+        (
+            "$.index[?(@.name == 'ReprI8')].attrs",
+            json!(["#[attr = Repr([ReprInt(SignedInt(I8))])]\n"]),
+        ),
+        (
+            "$.index[?(@.name == 'ReprUsizeC')].attrs",
+            json!(["#[attr = Repr([ReprInt(UnsignedInt(Usize)), ReprC])]\n"]),
+        ),
+        (
+            "$.index[?(@.name == 'TransparentPub')].attrs",
+            json!(["#[attr = Repr([ReprTransparent])]\n"]),
+        ),
+        (
+            "$.index[?(@.name == 'TransparentPriv')].attrs",
+            json!(["#[attr = Repr([ReprTransparent])]\n"]),
+        ),
+    ];
 
-    // TODO: Test `#[repr(...)]` migrating.
-    assert_eq!(source_json, migrated_json);
+    for (query, expected) in query_expected {
+        let query_results = migrated_json.query(query).unwrap();
+
+        for actual in query_results {
+            assert_eq!(*actual, expected);
+        }
+    }
 }
 
 #[test]
