@@ -12,52 +12,66 @@ fn v42() {
         return;
     };
 
-    let (_, migrated_json) = generate_and_migrate_to("tests/v42/v42.rs", 42, 43);
+    let (source_json, migrated_json) = generate_and_migrate_to("tests/v42/v42.rs", 42, 43);
 
     let query_expected = [
         (
             "$.index[?(@.name == 'ReprRust')].attrs",
             json!(["#[attr = Repr([ReprRust])]\n"]),
+            json!([]),
         ),
         (
             "$.index[?(@.name == 'ReprC')].attrs",
             json!(["#[attr = Repr([ReprC])]\n"]),
+            json!([]),
         ),
         (
             "$.index[?(@.name == 'ReprPacked1')].attrs",
             json!(["#[attr = Repr([ReprPacked(Align(1 bytes))])]\n"]),
+            json!([]),
         ),
         (
             "$.index[?(@.name == 'ReprPacked2')].attrs",
             json!(["#[attr = Repr([ReprPacked(Align(2 bytes))])]\n"]),
+            json!([]),
         ),
         (
             "$.index[?(@.name == 'ReprCAlign8')].attrs",
             json!(["#[attr = Repr([ReprC, ReprAlign(Align(8 bytes))])]\n"]),
+            json!([]),
         ),
         (
             "$.index[?(@.name == 'ReprI8')].attrs",
             json!(["#[attr = Repr([ReprInt(SignedInt(I8))])]\n"]),
+            json!([]),
         ),
         (
             "$.index[?(@.name == 'ReprUsizeC')].attrs",
             json!(["#[attr = Repr([ReprInt(UnsignedInt(Usize)), ReprC])]\n"]),
+            json!([]),
         ),
         (
             "$.index[?(@.name == 'TransparentPub')].attrs",
             json!(["#[attr = Repr([ReprTransparent])]\n"]),
+            json!([]),
         ),
         (
             "$.index[?(@.name == 'TransparentPriv')].attrs",
             json!(["#[attr = Repr([ReprTransparent])]\n"]),
+            json!([]),
         ),
     ];
 
-    for (query, expected) in query_expected {
-        let query_results = migrated_json.query(query).unwrap();
+    for (query, source_expected, migrated_expected) in query_expected {
+        let source_results = source_json.query(query).unwrap();
+        let migrated_results = migrated_json.query(query).unwrap();
 
-        for actual in query_results {
-            assert_eq!(*actual, expected);
+        for actual in source_results {
+            assert_eq!(*actual, source_expected);
+        }
+
+        for actual in migrated_results {
+            assert_eq!(*actual, migrated_expected);
         }
     }
 }
