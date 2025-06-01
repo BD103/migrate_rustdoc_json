@@ -1,4 +1,44 @@
 //! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0390---2025-03-24>
+//!
+//! # `#[repr(...)]` Debug Format
+//!
+//! > **Syntax**
+//! >
+//! > _ReprAttrs_: `#[attr = Repr([` _ReprAttr_ (`, ` _ReprAttr_)<sup>\*</sup> `])]`\n
+//! >
+//! > _ReprAttr_:
+//! >     `ReprInt(` _IntType_ `)`
+//! >   | `ReprRust`
+//! >   | `ReprC`
+//! >   | `ReprPacked(` _Align_ `)`
+//! >   | `ReprSimd`
+//! >   | `ReprTransparent`
+//! >   | `ReprAlign(` _Align_ `)`
+//! >   | `ReprEmpty`
+//! >
+//! > _IntType_:
+//! >     `SignedInt(` _IntTy_ `)`
+//! >   | `UnsignedInt(` _UintTy_ `)`
+//! >
+//! > _IntTy_:
+//! >     `Isize`
+//! >   | `I8`
+//! >   | `I16`
+//! >   | `I32`
+//! >   | `I64`
+//! >   | `I128`
+//! >
+//! > _UintTy_:
+//! >     `Usize`
+//! >   | `U8`
+//! >   | `U16`
+//! >   | `U32`
+//! >   | `U64`
+//! >   | `U128`
+//! >
+//! > _Align_: `Align(` [`0`-`9`]<sup>+</sup> ` bytes)`
+//!
+//! Note that _Align_'s value is a [`u8`] and is always a power of 2.
 
 use rustdoc_types_42 as current;
 use rustdoc_types_43 as up;
