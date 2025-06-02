@@ -22,6 +22,9 @@ anyhow = "1.0.98"
 anstream = "0.6.18"
 anstyle = "1.0.10"
 
+# Parser combinator for migrating text formats
+winnow = "0.7.10"
+
 # All supported `rustdoc_types` format versions
 rustdoc_types_41 = { version = "0.37", package = "rustdoc-types", features = ["rustc-hash"] }
 rustdoc_types_42 = { version = "0.38", package = "rustdoc-types", features = ["rustc-hash"] }

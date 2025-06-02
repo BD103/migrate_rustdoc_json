@@ -28,8 +28,8 @@ pub struct ReprCAlign8 {
     b: u64,
 }
 
-#[repr(u8)]
-pub enum ReprU8 {
+#[repr(i8)]
+pub enum ReprI8 {
     First,
     Second,
 }
