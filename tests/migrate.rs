@@ -18,42 +18,42 @@ fn v42() {
         (
             "$.index[?(@.name == 'ReprRust')].attrs",
             json!(["#[attr = Repr([ReprRust])]\n"]),
-            json!([]),
+            json!(["#[repr(Rust)]"]),
         ),
         (
             "$.index[?(@.name == 'ReprC')].attrs",
             json!(["#[attr = Repr([ReprC])]\n"]),
-            json!([]),
+            json!(["#[repr(C)]"]),
         ),
         (
             "$.index[?(@.name == 'ReprPacked1')].attrs",
             json!(["#[attr = Repr([ReprPacked(Align(1 bytes))])]\n"]),
-            json!([]),
+            json!(["#[repr(packed(1)]"]),
         ),
         (
             "$.index[?(@.name == 'ReprPacked2')].attrs",
             json!(["#[attr = Repr([ReprPacked(Align(2 bytes))])]\n"]),
-            json!([]),
+            json!(["#[repr(packed(2))]"]),
         ),
         (
             "$.index[?(@.name == 'ReprCAlign8')].attrs",
             json!(["#[attr = Repr([ReprC, ReprAlign(Align(8 bytes))])]\n"]),
-            json!([]),
+            json!(["#[repr(C, align(8))]"]),
         ),
         (
             "$.index[?(@.name == 'ReprI8')].attrs",
             json!(["#[attr = Repr([ReprInt(SignedInt(I8))])]\n"]),
-            json!([]),
+            json!(["#[repr(i8)]"]),
         ),
         (
             "$.index[?(@.name == 'ReprUsizeC')].attrs",
             json!(["#[attr = Repr([ReprInt(UnsignedInt(Usize)), ReprC])]\n"]),
-            json!([]),
+            json!(["#[repr(usize, C)]"]),
         ),
         (
             "$.index[?(@.name == 'TransparentPub')].attrs",
             json!(["#[attr = Repr([ReprTransparent])]\n"]),
-            json!([]),
+            json!(["#[repr(transparent)]"]),
         ),
         (
             "$.index[?(@.name == 'TransparentPriv')].attrs",
