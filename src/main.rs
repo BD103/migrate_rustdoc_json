@@ -39,11 +39,10 @@ fn migrate_rustdoc_types() -> anyhow::Result<()> {
 
     let output = self::migrations::migrate_up(&input, args.to_version)?;
 
-    {
-        let blue = Style::new().fg_color(Some(Color::Ansi(AnsiColor::Blue)));
-
-        eprintln!("{blue}Done!{blue:#} :D");
-    }
+    eprintln!(
+        "{blue}Done!{blue:#} :D",
+        blue = Style::new().fg_color(Some(Color::Ansi(AnsiColor::Blue))),
+    );
 
     println!("{output}");
 
