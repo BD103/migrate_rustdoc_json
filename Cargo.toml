@@ -6,6 +6,8 @@ edition = "2024"
 description = "Migrate `rustdoc` JSON from one format version to another"
 repository = "https://github.com/BD103/migrate_rustdoc_types"
 license = "MIT OR Apache-2.0"
+keywords = ["rustdoc", "cli"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 # CLI argument parsing
@@ -33,4 +35,5 @@ rustdoc_types_44 = { version = "0.40", package = "rustdoc-types", features = ["r
 rustdoc_types_45 = { version = "0.41", package = "rustdoc-types", features = ["rustc-hash"] }
 
 [dev-dependencies]
+# Querying JSON, used for simpler testing
 jsonpath-rust = "1.0.2"
