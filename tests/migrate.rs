@@ -28,7 +28,7 @@ fn v42() {
         (
             "$.index[?(@.name == 'ReprPacked1')].attrs",
             json!(["#[attr = Repr([ReprPacked(Align(1 bytes))])]\n"]),
-            json!(["#[repr(packed(1)]"]),
+            json!(["#[repr(packed(1))]"]),
         ),
         (
             "$.index[?(@.name == 'ReprPacked2')].attrs",
@@ -58,7 +58,9 @@ fn v42() {
         (
             "$.index[?(@.name == 'TransparentPriv')].attrs",
             json!(["#[attr = Repr([ReprTransparent])]\n"]),
-            json!([]),
+            // Although `rustdoc` would hide this `#[repr(transparent)]` if the JSON was built in
+            // v43, the migration doesn't yet have the logic to detect this.
+            json!(["#[repr(transparent)]"]),
         ),
     ];
 
