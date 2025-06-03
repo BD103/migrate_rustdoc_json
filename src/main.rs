@@ -14,9 +14,9 @@ mod version;
 
 /// The main entrypoint with a custom error handler.
 ///
-/// For the program logic, see [`migrate_rustdoc_types()`].
+/// For the program logic, see [`migrate_rustdoc_json()`].
 fn main() -> ExitCode {
-    match migrate_rustdoc_types() {
+    match migrate_rustdoc_json() {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             let style = Style::new()
@@ -31,7 +31,7 @@ fn main() -> ExitCode {
 }
 
 /// The main program logic.
-fn migrate_rustdoc_types() -> anyhow::Result<()> {
+fn migrate_rustdoc_json() -> anyhow::Result<()> {
     let args = args::parse_args()?;
 
     let input = std::fs::read_to_string(&args.input)

@@ -89,9 +89,9 @@ fn generate_json(source: &Path, format_version: u32) -> PathBuf {
 }
 
 fn migrate_json(json: &Path, format_version: u32) -> PathBuf {
-    let program = Path::new(env!("CARGO_BIN_EXE_migrate_rustdoc_types"));
+    let program = Path::new(env!("CARGO_BIN_EXE_migrate_rustdoc_json"));
 
-    assert!(program.is_file(), "`migrate_rustdoc_types` cannot be found");
+    assert!(program.is_file(), "`migrate_rustdoc_json` cannot be found");
 
     let migrated_path = json.with_extension("migrated.json");
     let migrated_file = File::create(&migrated_path).unwrap();

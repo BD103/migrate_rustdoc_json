@@ -1,10 +1,10 @@
 [package]
-name = "migrate_rustdoc_types"
+name = "migrate_rustdoc_json"
 version = "0.1.0-dev"
 authors = ["BD103"]
 edition = "2024"
 description = "Migrate Rustdoc JSON from one format version to another"
-repository = "https://github.com/BD103/migrate_rustdoc_types"
+repository = "https://github.com/BD103/migrate_rustdoc_json"
 license = "MIT OR Apache-2.0"
 keywords = ["rustdoc", "cli"]
 categories = ["command-line-utilities"]

@@ -18,7 +18,7 @@
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
 ///
-/// use migrate_rustdoc_types::impl_unchanged_migrations;
+/// use migrate_rustdoc_json::impl_unchanged_migrations;
 ///
 /// impl_unchanged_migrations! {
 ///     Crate,
@@ -876,7 +876,7 @@ macro_rules! impl_unchanged_migrations {
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
 ///
-/// use migrate_rustdoc_types::impl_single_unchanged_migration;
+/// use migrate_rustdoc_json::impl_single_unchanged_migration;
 ///
 /// impl_single_unchanged_migration! {
 ///     struct NamedStruct {
@@ -890,7 +890,7 @@ macro_rules! impl_unchanged_migrations {
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
 ///
-/// use migrate_rustdoc_types::impl_single_unchanged_migration;
+/// use migrate_rustdoc_json::impl_single_unchanged_migration;
 ///
 /// impl_single_unchanged_migration! {
 ///     struct NamedTuple(field_a, field_b);
@@ -901,7 +901,7 @@ macro_rules! impl_unchanged_migrations {
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
 ///
-/// use migrate_rustdoc_types::impl_single_unchanged_migration;
+/// use migrate_rustdoc_json::impl_single_unchanged_migration;
 ///
 /// impl_single_unchanged_migration! {
 ///     enum Enum {
@@ -1024,7 +1024,7 @@ macro_rules! impl_single_unchanged_migration {
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
 ///
-/// use migrate_rustdoc_types::declare_migrate_up;
+/// use migrate_rustdoc_json::declare_migrate_up;
 ///
 /// declare_migrate_up!(41, 42);
 /// ```
@@ -1061,7 +1061,7 @@ macro_rules! declare_migrate_up {
 /// use rustdoc_types_41 as current;
 /// use rustdoc_types_42 as up;
 ///
-/// use migrate_rustdoc_types::declare_serialize_deserialize;
+/// use migrate_rustdoc_json::declare_serialize_deserialize;
 ///
 /// declare_serialize_deserialize!();
 /// ```
