@@ -23,7 +23,7 @@ fn main() -> ExitCode {
                 .bold()
                 .fg_color(Some(Color::Ansi(AnsiColor::BrightRed)));
 
-            eprintln!("(._.;) {style}Error{style:#}: {error:?}");
+            eprintln!("{style}Error{style:#}: {error:?}");
 
             ExitCode::FAILURE
         }
