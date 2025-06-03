@@ -255,13 +255,13 @@ mod parser {
 
     fn parse_repr_attr<'s>(input: &mut &'s str) -> Result<ReprAttr<'s>> {
         dispatch! { alpha1;
-            "ReprInt" => delimited("(", parse_int_type, ")").map(|int_type| ReprAttr::Int(int_type)),
+            "ReprInt" => delimited("(", parse_int_type, ")").map(ReprAttr::Int),
             "ReprRust" => empty.value(ReprAttr::Rust),
             "ReprC" => empty.value(ReprAttr::C),
-            "ReprPacked" => delimited("(", parse_align, ")").map(|s| ReprAttr::Packed(s)),
+            "ReprPacked" => delimited("(", parse_align, ")").map(ReprAttr::Packed),
             "ReprSimd" => empty.value(ReprAttr::Simd),
             "ReprTransparent" => empty.value(ReprAttr::Transparent),
-            "ReprAlign" => delimited("(", parse_align, ")").map(|s| ReprAttr::Align(s)),
+            "ReprAlign" => delimited("(", parse_align, ")").map(ReprAttr::Align),
             // This shouldn't realistically ever be hit.
             "ReprEmpty" => empty.value(ReprAttr::Empty),
             _ => fail::<_, _, _>,
@@ -269,16 +269,16 @@ mod parser {
         .parse_next(input)
     }
 
-    fn parse_int_type<'s>(input: &mut &'s str) -> Result<IntType> {
+    fn parse_int_type(input: &mut &str) -> Result<IntType> {
         dispatch! { alpha1;
-            "SignedInt" => delimited("(", parse_int_ty, ")").map(|int_size| IntType::Signed(int_size)),
-            "UnsignedInt" => delimited("(", parse_uint_ty, ")").map(|int_size| IntType::Unsigned(int_size)),
+            "SignedInt" => delimited("(", parse_int_ty, ")").map(IntType::Signed),
+            "UnsignedInt" => delimited("(", parse_uint_ty, ")").map(IntType::Unsigned),
             _ => fail::<_, _, _>,
         }
         .parse_next(input)
     }
 
-    fn parse_int_ty<'s>(input: &mut &'s str) -> Result<IntSize> {
+    fn parse_int_ty(input: &mut &str) -> Result<IntSize> {
         dispatch! { alphanumeric1;
             "Isize" => empty.value(IntSize::XSize),
             "I8" => empty.value(IntSize::X8),
@@ -291,7 +291,7 @@ mod parser {
         .parse_next(input)
     }
 
-    fn parse_uint_ty<'s>(input: &mut &'s str) -> Result<IntSize> {
+    fn parse_uint_ty(input: &mut &str) -> Result<IntSize> {
         dispatch! { alphanumeric1;
             "Usize" => empty.value(IntSize::XSize),
             "U8" => empty.value(IntSize::X8),
