@@ -1,6 +1,6 @@
 [package]
 name = "migrate_rustdoc_json"
-version = "0.1.0-dev"
+version = "0.1.0"
 authors = ["BD103"]
 edition = "2024"
 description = "Migrate Rustdoc JSON from one format version to another"
