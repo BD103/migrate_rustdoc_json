@@ -1,3 +1,7 @@
+//! **v41 to v42 migration.**
+//!
+//! The `GenericArgs::ReturnTypeNotation` variant was added. No special migration is needed.
+//!
 //! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0380---2025-03-16>
 
 use rustdoc_types_41 as current;

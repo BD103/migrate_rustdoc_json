@@ -1,3 +1,8 @@
+//! **v44 to v45 migration.**
+//!
+//! The column index for `Span`s now begins at 1, not 0. This migration increments the column by 1
+//! for `Span::begin` and `Span::end`.
+//!
 //! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0410---2025-04-20>
 
 use rustdoc_types_44 as current;

@@ -1,3 +1,9 @@
+//! **v43 to v44 migration.**
+//!
+//! The `Crate::target` field was added. This migration currently leaves the target tuple and
+//! target features empty, however in the future it may fill in these values with [defaults
+//! specified in #139393](https://github.com/rust-lang/rust/pull/139393).
+//!
 //! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0400---2025-04-19>
 
 use rustdoc_types_43 as current;

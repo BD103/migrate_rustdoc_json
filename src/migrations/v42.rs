@@ -1,3 +1,16 @@
+//! **v42 to v43 migration.**
+//!
+//! The format of the stringified attributes in `Item::attrs` was changed for `#[repr(...)]`
+//! attributes. In v42 `#[repr(...)]` attributes were represented in their [`Debug`] form, such as
+//! `#[attr = Repr([ReprC, ReprInt(SignedInt(I8))])])`. v43 changes this to be the pretty printed
+//! form, such as `#[repr(C,i8)]`.
+//!
+//! This migration parses the [`Debug`] representation using [`winnow`] in order to convert it to
+//! the pretty-printed form. The syntax is listed below, and was found through experimentation and
+//! by reading `AttributeKind`'s `PrintAttribute` implementation in
+//! [commit `d93f678f`](https://github.com/rust-lang/rust/blob/d93f678fa55842cccd2f091deccd93e9494b3764/compiler/rustc_attr_data_structures/src/attributes.rs#L193)
+//! of the Rust compiler.
+//!
 //! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0390---2025-03-24>
 //!
 //! # `#[repr(...)]` Debug Format
