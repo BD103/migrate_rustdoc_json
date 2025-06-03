@@ -13,7 +13,7 @@ These tools either support only a _specific_ format version of the JSON or do no
 You can install the latest release of `migrate_rustdoc_json` with `cargo install`:
 
 ```sh
-cargo install migrate_rustdoc_json
+cargo install migrate_rustdoc_json --locked
 ```
 
 You can install the latest unstable version from Git:
