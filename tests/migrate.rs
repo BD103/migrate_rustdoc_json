@@ -58,7 +58,7 @@ fn v42() {
         (
             "$.index[?(@.name == 'TransparentPriv')].attrs",
             json!(["#[attr = Repr([ReprTransparent])]\n"]),
-            // Although `rustdoc` would hide this `#[repr(transparent)]` if the JSON was built in
+            // Although Rustdoc would hide this `#[repr(transparent)]` if the JSON was built in
             // v43, the migration doesn't yet have the logic to detect this.
             json!(["#[repr(transparent)]"]),
         ),

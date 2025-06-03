@@ -62,7 +62,7 @@ fn generate_json(source: &Path, format_version: u32) -> PathBuf {
     assert_eq!(
         source.extension(),
         Some(OsStr::new("rs")),
-        "can only generate `rustdoc` JSON for `.rs` files",
+        "can only generate Rustdoc JSON for `.rs` files",
     );
 
     let json_path = json_path(source);
@@ -81,7 +81,7 @@ fn generate_json(source: &Path, format_version: u32) -> PathBuf {
 
     assert!(
         status.success(),
-        "failed to generate `rustdoc` JSON, run with `INSTALL_TOOLCHAINS=1` to auto-install toolchains",
+        "failed to generate Rustdoc JSON, run with `INSTALL_TOOLCHAINS=1` to auto-install toolchains",
     );
     assert!(json_path.is_file());
 

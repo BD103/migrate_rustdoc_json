@@ -1,6 +1,6 @@
 # Migrate `rustdoc_types`
 
-Migrates `rustdoc` JSON from one format version to another.
+Migrates Rustdoc JSON from one format version to another.
 
 ## Installation
 
@@ -11,9 +11,9 @@ cargo install --git https://github.com/BD103/migrate_rustdoc_types migrate_rustd
 ## Quick Start
 
 ```sh
-# Build `rustdoc` JSON for a crate.
+# Build Rustdoc JSON for a crate.
 cargo +nightly rustdoc -- -Zunstable-options --output-format json
 
-# Migrate the `rustdoc` JSON to a newer format version.
+# Migrate the Rustdoc JSON to a newer format version.
 migrate_rustdoc_types --input target/doc/crate_name.json --to-version 45 > migrated.json
 ```

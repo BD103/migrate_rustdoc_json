@@ -7,7 +7,7 @@
 /// `current` and the newer version as the name `up`.
 ///
 /// Each supported type has a separate branch in this macro, meaning you can view a list of all
-/// supported types in `rustdoc`'s auto-generated reference. Note that multiple versions of the
+/// supported types in Rustdoc's auto-generated reference. Note that multiple versions of the
 /// same type may be supported, such as `Crate` and `Crate@v44`. The "unversioned" branch is for
 /// the oldest supported version of `rustdoc_types`, while the "versioned" branch is for the
 /// specified version (v44) and later.

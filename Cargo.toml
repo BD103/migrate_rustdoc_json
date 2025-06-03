@@ -3,7 +3,7 @@ name = "migrate_rustdoc_types"
 version = "0.1.0-dev"
 authors = ["BD103"]
 edition = "2024"
-description = "Migrate `rustdoc` JSON from one format version to another"
+description = "Migrate Rustdoc JSON from one format version to another"
 repository = "https://github.com/BD103/migrate_rustdoc_types"
 license = "MIT OR Apache-2.0"
 keywords = ["rustdoc", "cli"]
@@ -13,7 +13,7 @@ categories = ["command-line-utilities"]
 # CLI argument parsing
 pico-args = "0.5.0"
 
-# `rustdoc` JSON deserialization
+# Rustdoc JSON deserialization
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 

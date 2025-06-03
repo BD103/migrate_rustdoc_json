@@ -15,7 +15,7 @@ type MigrateUpFn = fn(UntypedCrate) -> anyhow::Result<UntypedCrate>;
 type DeserializeFn = fn(&str) -> anyhow::Result<UntypedCrate>;
 type SerializeFn = fn(UntypedCrate) -> anyhow::Result<String>;
 
-/// A function lookup table for migrating `rustdoc` JSON from one version to another.
+/// A function lookup table for migrating Rustdoc JSON from one version to another.
 ///
 /// `MIGRATIONS[0]` migrates v1 to v2, `MIGRATIONS[1]` migrates v2 to v3, etc.
 static MIGRATIONS: [(MigrateUpFn, DeserializeFn, SerializeFn); 45] = [
