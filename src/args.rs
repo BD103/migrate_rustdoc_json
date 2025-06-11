@@ -11,6 +11,15 @@ pub struct Args {
 pub fn parse_args() -> anyhow::Result<Args> {
     let mut pico_args = pico_args::Arguments::from_env();
 
+    if pico_args.contains(["-V", "--version"]) {
+        const NAME: &str = env!("CARGO_PKG_NAME");
+        const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+        println!("{NAME} v{VERSION}");
+
+        std::process::exit(0);
+    }
+
     let args = Args {
         input: pico_args.value_from_os_str("--input", |s| -> Result<PathBuf, Infallible> {
             Ok(s.into())
