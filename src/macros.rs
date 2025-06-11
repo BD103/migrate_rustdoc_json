@@ -1040,15 +1040,14 @@ macro_rules! declare_migrate_up {
         ///
         #[doc = concat!("The returned raw pointer is a [`rustdoc_types_", $up, "::Crate`] put in a [`Box`] then converted to a")]
         /// raw pointer with [`Box::into_raw()`].
-        pub fn migrate_up(current_crate: $crate::untyped_crate::UntypedCrate) -> ::anyhow::Result<$crate::untyped_crate::UntypedCrate> {
-            use $crate::untyped_crate::UntypedCrate;
+        pub fn migrate_up(current_crate: ::std::boxed::Box<dyn ::std::any::Any>) -> ::anyhow::Result<::std::boxed::Box<dyn ::std::any::Any>> {
             use $crate::traits::MigrateUp;
 
-            let current_crate = current_crate.into_crate::<current::Crate>();
+            let current_crate = current_crate.downcast::<current::Crate>().unwrap();
 
             let up_crate = (*current_crate).migrate_up();
 
-            Ok(UntypedCrate::new(up_crate))
+            Ok(::std::boxed::Box::new(up_crate))
         }
     };
 }
@@ -1070,23 +1069,21 @@ macro_rules! declare_serialize_deserialize {
     () => {
         pub fn deserialize(
             current_crate: &str,
-        ) -> ::anyhow::Result<$crate::untyped_crate::UntypedCrate> {
+        ) -> ::anyhow::Result<::std::boxed::Box<dyn ::std::any::Any>> {
             use ::anyhow::Context;
-
-            use $crate::untyped_crate::UntypedCrate;
 
             let current_crate: current::Crate = ::serde_json::from_str(current_crate)
                 .context("failed to deserialize `Crate` from JSON")?;
 
-            Ok(UntypedCrate::new(current_crate))
+            Ok(::std::boxed::Box::new(current_crate))
         }
 
         pub fn serialize(
-            current_crate: $crate::untyped_crate::UntypedCrate,
+            current_crate: ::std::boxed::Box<dyn ::std::any::Any>,
         ) -> ::anyhow::Result<String> {
             use ::anyhow::Context;
 
-            let current_crate = current_crate.into_crate::<current::Crate>();
+            let current_crate = current_crate.downcast::<current::Crate>().unwrap();
 
             ::serde_json::to_string(current_crate.as_ref())
                 .context("failed to serialize `Crate` to JSON")

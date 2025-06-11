@@ -9,7 +9,6 @@ mod macros;
 mod migrations;
 mod primitives;
 mod traits;
-mod untyped_crate;
 mod version;
 
 /// The main entrypoint with a custom error handler.

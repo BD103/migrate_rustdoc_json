@@ -1,9 +1,9 @@
 //! All migrations currently implemented by this crate.
 
+use std::any::Any;
+
 use anstream::eprintln;
 use anstyle::{AnsiColor, Color, Style};
-
-use crate::untyped_crate::UntypedCrate;
 
 mod v41;
 mod v42;
@@ -11,9 +11,9 @@ mod v43;
 mod v44;
 mod v45;
 
-type MigrateUpFn = fn(UntypedCrate) -> anyhow::Result<UntypedCrate>;
-type DeserializeFn = fn(&str) -> anyhow::Result<UntypedCrate>;
-type SerializeFn = fn(UntypedCrate) -> anyhow::Result<String>;
+type MigrateUpFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>>;
+type DeserializeFn = fn(&str) -> anyhow::Result<Box<dyn Any>>;
+type SerializeFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<String>;
 
 /// A function lookup table for migrating Rustdoc JSON from one version to another.
 ///
@@ -277,8 +277,8 @@ pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
 }
 
 /// Panics when called, displaying an error that the given migration isn't yet supported.
-fn unimplemented_migrate_up<const N: usize>(_: UntypedCrate) -> anyhow::Result<UntypedCrate> {
-    fn inner(n: usize) -> anyhow::Result<UntypedCrate> {
+fn unimplemented_migrate_up<const N: usize>(_: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>> {
+    fn inner(n: usize) -> anyhow::Result<Box<dyn Any>> {
         Err(anyhow::anyhow!(
             "migrating from format version v{} to format version v{} is not yet supported",
             n,
@@ -290,8 +290,8 @@ fn unimplemented_migrate_up<const N: usize>(_: UntypedCrate) -> anyhow::Result<U
 }
 
 /// Errors when called, displaying an error that deserialization isn't yet supported.
-fn unimplemented_deserialize<const N: usize>(_: &str) -> anyhow::Result<UntypedCrate> {
-    fn inner(n: usize) -> anyhow::Result<UntypedCrate> {
+fn unimplemented_deserialize<const N: usize>(_: &str) -> anyhow::Result<Box<dyn Any>> {
+    fn inner(n: usize) -> anyhow::Result<Box<dyn Any>> {
         Err(anyhow::anyhow!("format version v{n} is not yet supported"))
     }
 
@@ -299,7 +299,7 @@ fn unimplemented_deserialize<const N: usize>(_: &str) -> anyhow::Result<UntypedC
 }
 
 /// Panics when called, displaying an error that serialization should be supported but isn't.
-fn unimplemented_serialize<const N: usize>(_: UntypedCrate) -> anyhow::Result<String> {
+fn unimplemented_serialize<const N: usize>(_: Box<dyn Any>) -> anyhow::Result<String> {
     fn inner(n: usize) -> String {
         // This is unreachable because if we support migrating to this version, we should support
         // serializing it as well.
