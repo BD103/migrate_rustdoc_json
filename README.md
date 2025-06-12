@@ -1,6 +1,6 @@
 # Migrate Rustdoc JSON
 
-Migrates Rustdoc JSON from one format version to another.
+Migrate Rustdoc's JSON output to newer format versions.
 
 ## Why is this useful?
 
