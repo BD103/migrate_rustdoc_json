@@ -52,7 +52,7 @@ migrate_rustdoc_json --input target/doc/crate_name.json --to-version 45 > migrat
 
 |`merge_rustdoc_json` Version|Format Version|
 |-|-|
-|v0.2.0-dev|v41..=v45|
+|v0.2.0|v41..=v45|
 |v0.1.0|v41..=v45|
 
 This table shows which range of format versions a given release of `merge_rustdoc_json` supports. `merge_rustdoc_json` can read any JSON within the range, and can migrate it to any greater version within the range.
