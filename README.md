@@ -25,7 +25,7 @@ cargo install --git https://github.com/BD103/migrate_rustdoc_json --locked
 ## Quick Start
 
 ```sh
-migrate_rustdoc_json --input path/to/rustdoc.json --to-version 45 > migrated.json
+migrate_rustdoc_json --input path/to/rustdoc.json --to-version latest > migrated.json
 ```
 
 ## Usage

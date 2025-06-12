@@ -36,7 +36,7 @@ fn migrate_rustdoc_json() -> anyhow::Result<()> {
     let input = std::fs::read_to_string(&args.input)
         .with_context(|| format!("could not read `--input` file: {}", args.input.display()))?;
 
-    let output = self::migrations::migrate_up(&input, args.to_version)?;
+    let output = self::migrations::migrate_up(&input, args.to_version.format_version())?;
 
     eprintln!(
         "{blue}Done!{blue:#} :D",

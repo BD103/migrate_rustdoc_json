@@ -2,10 +2,12 @@
 
 use std::{convert::Infallible, ffi::OsStr, path::PathBuf};
 
+use crate::version::ToVersion;
+
 #[derive(Debug)]
 pub struct Args {
     pub input: PathBuf,
-    pub to_version: u32,
+    pub to_version: ToVersion,
 }
 
 pub fn parse_args() -> anyhow::Result<Args> {
