@@ -2,6 +2,9 @@
 
 use std::{convert::Infallible, ffi::OsStr, path::PathBuf};
 
+use anstream::println;
+use anstyle::{AnsiColor, Color, Style};
+
 use crate::version::ToVersion;
 
 #[derive(Debug)]
@@ -51,14 +54,18 @@ fn print_version() {
 fn print_help() {
     const BIN_NAME: &str = env!("CARGO_BIN_NAME");
 
-    println!("\
+    println!(
+        "\
 Migrate Rustdoc's JSON output to newer format versions
 
-Usage: {BIN_NAME} --input <FILE> --to-version <VERSION> [OPTIONS]
+{bold_blue}Usage:{bold_blue:#} {blue}{BIN_NAME} --input <FILE> --to-version <VERSION> [OPTIONS]{blue:#}
 
-Options:
-  -h, --help                  Prints the help text and exits
-  -V, --version               Prints the version info and exits
-      --input <FILE>          The Rustdoc JSON to read
-      --to-version <VERSION>  The format version to migrate to");
+{bold_blue}Options:{bold_blue:#}
+  {blue}-h, --help                  {blue:#}Prints the help text and exits
+  {blue}-V, --version               {blue:#}Prints the version info and exits
+  {blue}    --input <FILE>          {blue:#}The Rustdoc JSON to read
+  {blue}    --to-version <VERSION>  {blue:#}The format version to migrate to",
+        bold_blue = Style::new().bold().fg_color(Some(Color::Ansi(AnsiColor::Blue))),
+        blue = Style::new().fg_color(Some(Color::Ansi(AnsiColor::Blue))),
+    );
 }
