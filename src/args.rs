@@ -13,12 +13,13 @@ pub struct Args {
 pub fn parse_args() -> anyhow::Result<Args> {
     let mut pico_args = pico_args::Arguments::from_env();
 
+    if pico_args.contains(["-h", "--help"]) {
+        print_help();
+        std::process::exit(0);
+    }
+
     if pico_args.contains(["-V", "--version"]) {
-        const NAME: &str = env!("CARGO_PKG_NAME");
-        const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-        println!("{NAME} v{VERSION}");
-
+        print_version();
         std::process::exit(0);
     }
 
@@ -38,4 +39,26 @@ pub fn parse_args() -> anyhow::Result<Args> {
     );
 
     Ok(args)
+}
+
+fn print_version() {
+    const NAME: &str = env!("CARGO_PKG_NAME");
+    const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+    println!("{NAME} v{VERSION}");
+}
+
+fn print_help() {
+    const BIN_NAME: &str = env!("CARGO_BIN_NAME");
+
+    println!("\
+Migrate Rustdoc's JSON output to newer format versions
+
+Usage: {BIN_NAME} --input <FILE> --to-version <VERSION> [OPTIONS]
+
+Options:
+  -h, --help                  Prints the help text and exits
+  -V, --version               Prints the version info and exits
+      --input <FILE>          The Rustdoc JSON to read
+      --to-version <VERSION>  The format version to migrate to");
 }
