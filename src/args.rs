@@ -1,6 +1,6 @@
 //! The CLI arguments and their parsing logic.
 
-use std::{convert::Infallible, ffi::OsStr, path::PathBuf};
+use std::{convert::Infallible, env, ffi::OsStr, path::PathBuf};
 
 use anstream::println;
 use anstyle::{AnsiColor, Color, Style};
@@ -14,7 +14,14 @@ pub struct Args {
 }
 
 pub fn parse_args() -> anyhow::Result<Args> {
-    let mut pico_args = pico_args::Arguments::from_env();
+    let args: Vec<_> = env::args_os().skip(1).collect();
+
+    if args.is_empty() {
+        print_help();
+        std::process::exit(0);
+    }
+
+    let mut pico_args = pico_args::Arguments::from_vec(args);
 
     if pico_args.contains(["-h", "--help"]) {
         print_help();
