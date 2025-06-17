@@ -104,7 +104,9 @@ fn v44() {
 
     let query = "$.index[*].span['begin', 'end']";
 
-    for (_, (source_result, migrated_result)) in query_both(&source_json, &migrated_json, query) {
+    for (source_result, migrated_result) in
+        query_both(&source_json, &migrated_json, query).into_values()
+    {
         let expected = {
             let mut source_result = source_result.unwrap().clone();
             source_result[1] = Value::Number((source_result[1].as_u64().unwrap() + 1).into());
@@ -112,5 +114,28 @@ fn v44() {
         };
 
         assert_eq!(*migrated_result.unwrap(), expected);
+    }
+}
+
+#[test]
+fn v45() {
+    let ControlFlow::Continue(()) = needs_toolchain(45) else {
+        return;
+    };
+
+    let (_, migrated_json) = generate_and_migrate_to("tests/v45/v45.rs", 45, 46);
+
+    let pub_query = "$.index[?(@.name == 'TransparentPub')].attrs";
+    let pub_expected = json!(["#[repr(transparent)]"]);
+
+    let priv_query = "$.index[?(@.name == 'TransparentPriv')].attrs";
+    let priv_expected = json!([]);
+
+    for result in migrated_json.query(pub_query).unwrap() {
+        assert_eq!(result, &pub_expected);
+    }
+
+    for result in migrated_json.query(priv_query).unwrap() {
+        assert_eq!(result, &priv_expected);
     }
 }
