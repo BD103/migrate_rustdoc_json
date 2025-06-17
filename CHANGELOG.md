@@ -4,10 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## v0.3.0 - 2025-06-17
 
-- **All Changes**: [`v0.2.0...main`](https://github.com/BD103/migrate_rustdoc_json/compare/v0.2.0...main)
+- **All Changes**: [`v0.2.0...v0.3.0`](https://github.com/BD103/migrate_rustdoc_json/compare/v0.2.0...v0.3.0)
 - **Format Versions**: v41..=v46
+
+### Added
+
+- You can now pass `--help` to view a list of CLI options supported by `migrate_rustdoc_json` ([16d5973](https://github.com/BD103/migrate_rustdoc_json/commit/16d5973d50a81eb9114fe814a96333ca7518e52b))
+    - The help screen will also be printed if `migrate_rustdoc_json` is run with no arguments.
+- Format version v46 is now supported ([d3d2d46](https://github.com/BD103/migrate_rustdoc_json/commit/d3d2d468daac2f00a6a8d9e703e38370d88827ba))
 
 ## v0.2.0 - 2025-06-11
 
