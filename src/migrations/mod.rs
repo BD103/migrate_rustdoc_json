@@ -91,7 +91,7 @@ pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
         bold = Style::new().bold(),
     );
 
-    // Convert the JSON string into an `UntypedCrate`.
+    // Convert the JSON string into a untyped `Crate`.
     let mut crate_ = (deserialize)(current)?;
 
     for i in current_version..to_version {
@@ -107,14 +107,14 @@ pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
                 .italic()
         );
 
-        // Migrate the `UntypedCrate` through all versions between the input and the desired
+        // Migrate the untyped `Crate` through all versions between the input and the desired
         // version.
         crate_ = (migrate_up)(crate_)?;
     }
 
     let serialize = MIGRATIONS[&to_version].2;
 
-    // Convert the `UntypedCrate` back to a JSON string.
+    // Convert the untyped `Crate` back to a JSON string.
     (serialize)(crate_)
 }
 

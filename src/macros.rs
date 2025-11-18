@@ -1033,13 +1033,12 @@ macro_rules! declare_migrate_up {
     ($current:literal, $up:literal) => {
         #[doc = concat!("Migrates a v", $current, " `Crate` to a ", $up, " `Crate`.")]
         ///
-        /// # Safety
+        #[doc = concat!("The returned value is an untyped [`rustdoc_types_", $up, "::Crate`].")]
         ///
-        #[doc = concat!("`current_crate` must be a [`rustdoc_types_", $current, "::Crate`] put in a [`Box`] then converted to a raw")]
-        /// pointer with [`Box::into_raw()`].
+        /// # Panics
         ///
-        #[doc = concat!("The returned raw pointer is a [`rustdoc_types_", $up, "::Crate`] put in a [`Box`] then converted to a")]
-        /// raw pointer with [`Box::into_raw()`].
+        #[doc = concat!("`current_crate` must be an untyped [`rustdoc_types_", $current, "::Crate`].")]
+        /// If it is not, this function will panic.
         pub fn migrate_up(current_crate: ::std::boxed::Box<dyn ::std::any::Any>) -> ::anyhow::Result<::std::boxed::Box<dyn ::std::any::Any>> {
             use $crate::traits::MigrateUp;
 
