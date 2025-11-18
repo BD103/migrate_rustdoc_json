@@ -15,7 +15,7 @@ use serde::Deserialize;
 ///
 /// `migrate_rustdoc_types` is able to (de)serialize all format versions in this range, and is able
 /// to migrate the lower bound all the way to the upper bound.
-const SUPPORTED_VERSIONS: RangeInclusive<u32> = 41..=46;
+const SUPPORTED_VERSIONS: RangeInclusive<u32> = 41..=48;
 
 /// Represents a format version supported by `migrate_rustdoc_types`.
 ///

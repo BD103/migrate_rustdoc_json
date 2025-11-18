@@ -11,6 +11,7 @@ mod v43;
 mod v44;
 mod v45;
 mod v46;
+mod v48;
 
 type MigrateUpFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>>;
 type DeserializeFn = fn(&str) -> anyhow::Result<Box<dyn Any>>;
@@ -62,10 +63,27 @@ static MIGRATIONS: LazyLock<BTreeMap<u32, (MigrateUpFn, DeserializeFn, Serialize
             (
                 46,
                 (
-                    // v47 does not exist yet, so we cannot migrate past v46.
-                    unimplemented_migrate_up::<46> as MigrateUpFn,
+                    v46::migrate_up as MigrateUpFn,
                     v46::deserialize as DeserializeFn,
                     v46::serialize as SerializeFn,
+                ),
+            ),
+            // v47 does not actually exist, v46 migrates directly to v48.
+            (
+                47,
+                (
+                    |crate_| Ok(crate_),
+                    v48::deserialize as DeserializeFn,
+                    v48::serialize as SerializeFn,
+                ),
+            ),
+            (
+                48,
+                (
+                    // We do not support v49 yet.
+                    unimplemented_migrate_up::<48> as MigrateUpFn,
+                    v48::deserialize as DeserializeFn,
+                    v48::serialize as SerializeFn,
                 ),
             ),
         ];

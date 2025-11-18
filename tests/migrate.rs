@@ -139,3 +139,43 @@ fn v45() {
         assert_eq!(result, &priv_expected);
     }
 }
+
+#[test]
+fn v46() {
+    let ControlFlow::Continue(()) = needs_toolchain(46) else {
+        return;
+    };
+
+    let (source_json, migrated_json) = generate_and_migrate_to("tests/v46/v46.rs", 46, 48);
+
+    let query_expected = [
+        (
+            "$.index[?(@.name == 'inline_hint')].attrs",
+            json!(["#[inline]"]),
+            json!(["#[attr = Inline(Hint)]"]),
+        ),
+        (
+            "$.index[?(@.name == 'inline_always')].attrs",
+            json!(["#[inline(always)]"]),
+            json!(["#[attr = Inline(Always)]"]),
+        ),
+        (
+            "$.index[?(@.name == 'inline_never')].attrs",
+            json!(["#[inline(never)]"]),
+            json!(["#[attr = Inline(Never)]"]),
+        ),
+    ];
+
+    for (query, source_expected, migrated_expected) in query_expected {
+        let source_results = source_json.query(query).unwrap();
+        let migrated_results = migrated_json.query(query).unwrap();
+
+        for actual in source_results {
+            assert_eq!(*actual, source_expected);
+        }
+
+        for actual in migrated_results {
+            assert_eq!(*actual, migrated_expected);
+        }
+    }
+}

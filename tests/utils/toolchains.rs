@@ -13,6 +13,8 @@ static TOOLCHAINS: LazyLock<BTreeMap<u32, &'static str>> = LazyLock::new(|| {
         (43, "nightly-2025-04-18"),
         (44, "nightly-2025-04-19"),
         (45, "nightly-2025-04-20"),
+        (46, "nightly-2025-06-10"),
+        (48, "nightly-2025-06-20"),
     ];
 
     BTreeMap::from(toolchains)
