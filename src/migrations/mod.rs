@@ -1,6 +1,6 @@
 //! All migrations currently implemented by this crate.
 
-use std::{any::Any, collections::BTreeMap, sync::LazyLock};
+use std::{any::Any, collections::HashMap, sync::LazyLock};
 
 use anstream::eprintln;
 use anstyle::{AnsiColor, Color, Style};
@@ -17,7 +17,7 @@ type MigrateUpFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>>;
 type DeserializeFn = fn(&str) -> anyhow::Result<Box<dyn Any>>;
 type SerializeFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<String>;
 
-static MIGRATIONS: LazyLock<BTreeMap<u32, (MigrateUpFn, DeserializeFn, SerializeFn)>> =
+static MIGRATIONS: LazyLock<HashMap<u32, (MigrateUpFn, DeserializeFn, SerializeFn)>> =
     LazyLock::new(|| {
         let migrations = [
             (
@@ -88,7 +88,7 @@ static MIGRATIONS: LazyLock<BTreeMap<u32, (MigrateUpFn, DeserializeFn, Serialize
             ),
         ];
 
-        BTreeMap::from(migrations)
+        HashMap::from(migrations)
     });
 
 pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {

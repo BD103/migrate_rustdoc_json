@@ -1,5 +1,5 @@
 use std::{
-    collections::BTreeMap,
+    collections::HashMap,
     ops::ControlFlow,
     process::Command,
     sync::{LazyLock, Mutex},
@@ -7,7 +7,7 @@ use std::{
 
 use anyhow::Context;
 
-static TOOLCHAINS: LazyLock<BTreeMap<u32, &'static str>> = LazyLock::new(|| {
+static TOOLCHAINS: LazyLock<HashMap<u32, &'static str>> = LazyLock::new(|| {
     let toolchains = [
         (42, "nightly-2025-03-22"),
         (43, "nightly-2025-04-18"),
@@ -17,7 +17,7 @@ static TOOLCHAINS: LazyLock<BTreeMap<u32, &'static str>> = LazyLock::new(|| {
         (48, "nightly-2025-06-20"),
     ];
 
-    BTreeMap::from(toolchains)
+    HashMap::from(toolchains)
 });
 
 static RUSTUP_LOCK: Mutex<()> = Mutex::new(());

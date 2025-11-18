@@ -1,5 +1,5 @@
 use std::{
-    collections::BTreeMap,
+    collections::HashMap,
     ffi::OsStr,
     fs::File,
     io::BufReader,
@@ -31,8 +31,8 @@ pub fn query_both<'a, 'b>(
     source_json: &'a Value,
     migrated_json: &'b Value,
     query: &str,
-) -> BTreeMap<String, (Option<&'a Value>, Option<&'b Value>)> {
-    let mut map = BTreeMap::new();
+) -> HashMap<String, (Option<&'a Value>, Option<&'b Value>)> {
+    let mut map = HashMap::new();
 
     let source_query = source_json.query_with_path(query).unwrap();
     let migrated_query = migrated_json.query_with_path(query).unwrap();
