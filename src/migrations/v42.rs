@@ -49,7 +49,7 @@
 //! >   | `U64`
 //! >   | `U128`
 //! >
-//! > _Align_: `Align(` [`0`-`9`]<sup>+</sup> ` bytes)`
+//! > _Align_: `Align(` \[`0`-`9`\]<sup>+</sup> ` bytes)`
 //!
 //! Note that _Align_'s value is a [`u8`] and is always a power of 2.
 
