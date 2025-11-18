@@ -21,8 +21,17 @@ pub fn generate_and_migrate_to(
     let source_json = read_json(&source_path);
     let migrated_json = read_json(&migrated_path);
 
-    assert_eq!(source_json["format_version"], source_format_version);
-    assert_eq!(migrated_json["format_version"], to_version);
+    assert_eq!(
+        source_json["format_version"],
+        source_format_version,
+        "toolchain {toolchain} failed to generate JSON with the expected format version v{source_format_version}",
+        toolchain = super::get_toolchain(source_format_version),
+    );
+
+    assert_eq!(
+        migrated_json["format_version"], to_version,
+        "`migrate_rustdoc_json` did not bump the format version to the expected v{to_version}",
+    );
 
     (source_json, migrated_json)
 }
