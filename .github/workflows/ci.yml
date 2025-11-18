@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # Only include the debug info necessary for backtraces (file names and line numbers). Any extra
+  # debug info provided by `debuginfo=1` or `debuginfo=2` require an interactive debugger like
+  # `lldb` or `gdb`.
+  RUSTFLAGS: -C debuginfo=line-tables-only
+
+jobs:
+  test:
+    name: Run tests
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Run tests
+        run: cargo test --all-targets
+        env:
+          # Automatically install Rust toolchains if missing.
+          INSTALL_TOOLCHAINS: 1
+
+  clippy:
+    name: Lint with Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Run Clippy
+        run: cargo clippy -- --deny warnings
+
+  rustfmt:
+    name: Check with rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run rustfmt
+        run: cargo fmt --all --check
+
+  typos:
+    name: Check for typos
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Run Typos
+        id: typos
+        uses: crate-ci/typos@v1.39.2
