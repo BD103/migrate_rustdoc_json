@@ -32,6 +32,9 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
+          # Cache installed Rust toolchains, to speed up our tests and to lessen our load on Rust's
+          # CDN.
+          cache-directories: ~/.rustup/toolchains
 
       - name: Run tests
         run: cargo test --all-targets
