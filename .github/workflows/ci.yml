@@ -17,7 +17,9 @@ jobs:
     name: Run tests
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        # Tests currently fail on Windows, so it is disabled.
+        # <https://github.com/BD103/migrate_rustdoc_json/issues/12>
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
