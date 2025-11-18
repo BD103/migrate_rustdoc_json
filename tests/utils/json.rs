@@ -4,7 +4,7 @@ use std::{
     fs::File,
     io::BufReader,
     path::{Path, PathBuf},
-    process::Command,
+    process::{Command, Stdio},
 };
 
 use jsonpath_rust::JsonPath;
@@ -105,19 +105,21 @@ fn migrate_json(json: &Path, format_version: u32) -> PathBuf {
     let migrated_path = json.with_extension("migrated.json");
     let migrated_file = File::create(&migrated_path).unwrap();
 
-    let status = Command::new(program)
+    let output = Command::new(program)
         .arg("--input")
         .arg(json)
         .arg("--to-version")
         .arg(format_version.to_string())
         .stdout(migrated_file)
-        .status()
+        .stderr(Stdio::piped())
+        .output()
         .unwrap();
 
     assert!(
-        status.success(),
-        "migrating {} to format version {format_version} failed",
-        json.display(),
+        output.status.success(),
+        "migrating {json} to format version {format_version} failed:\n{stderr}",
+        json = json.display(),
+        stderr = String::from_utf8_lossy(&output.stderr),
     );
 
     migrated_path
