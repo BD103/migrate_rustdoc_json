@@ -5,91 +5,66 @@ use std::{any::Any, collections::HashMap, sync::LazyLock};
 use anstream::eprintln;
 use anstyle::{AnsiColor, Color, Style};
 
-mod v41;
-mod v42;
-mod v43;
-mod v44;
-mod v45;
-mod v46;
-mod v48;
-
 type MigrateUpFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>>;
 type DeserializeFn = fn(&str) -> anyhow::Result<Box<dyn Any>>;
 type SerializeFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<String>;
 
-static MIGRATIONS: LazyLock<HashMap<u32, (MigrateUpFn, DeserializeFn, SerializeFn)>> =
-    LazyLock::new(|| {
-        let migrations = [
-            (
-                41,
-                (
-                    v41::migrate_up as MigrateUpFn,
-                    v41::deserialize as DeserializeFn,
-                    v41::serialize as SerializeFn,
-                ),
-            ),
-            (
-                42,
-                (
-                    v42::migrate_up as MigrateUpFn,
-                    v42::deserialize as DeserializeFn,
-                    v42::serialize as SerializeFn,
-                ),
-            ),
-            (
-                43,
-                (
-                    v43::migrate_up as MigrateUpFn,
-                    v43::deserialize as DeserializeFn,
-                    v43::serialize as SerializeFn,
-                ),
-            ),
-            (
-                44,
-                (
-                    v44::migrate_up as MigrateUpFn,
-                    v44::deserialize as DeserializeFn,
-                    v44::serialize as SerializeFn,
-                ),
-            ),
-            (
-                45,
-                (
-                    v45::migrate_up as MigrateUpFn,
-                    v45::deserialize as DeserializeFn,
-                    v45::serialize as SerializeFn,
-                ),
-            ),
-            (
-                46,
-                (
-                    v46::migrate_up as MigrateUpFn,
-                    v46::deserialize as DeserializeFn,
-                    v46::serialize as SerializeFn,
-                ),
-            ),
-            // v47 does not actually exist, v46 migrates directly to v48.
-            (
-                47,
-                (
-                    |crate_| Ok(crate_),
-                    v48::deserialize as DeserializeFn,
-                    v48::serialize as SerializeFn,
-                ),
-            ),
-            (
-                48,
-                (
-                    // We do not support v49 yet.
-                    unimplemented_migrate_up::<48> as MigrateUpFn,
-                    v48::deserialize as DeserializeFn,
-                    v48::serialize as SerializeFn,
-                ),
-            ),
-        ];
+type MigrationMap = LazyLock<HashMap<u32, (MigrateUpFn, DeserializeFn, SerializeFn)>>;
 
-        HashMap::from(migrations)
-    });
+/// A macro that generates the `mod v*;` statements and the [`MIGRATIONS`] map.
+macro_rules! declare_migrations {
+    {
+        $(mod $name:ident ($version:expr);)*
+
+        #[last]
+        mod $last_name:ident ($last_version:expr);
+
+        static $migration_map:ident: MigrationMap = {};
+    } => {
+        $(mod $name;)*
+        mod $last_name;
+
+        static $migration_map: MigrationMap = LazyLock::new(|| {
+            let migrations = [
+                $(
+                    (
+                        $version,
+                        (
+                            $name::migrate_up as MigrateUpFn,
+                            $name::deserialize as DeserializeFn,
+                            $name::serialize as SerializeFn,
+                        ),
+                    ),
+                )*
+                (
+                    $last_version,
+                    (
+                        unimplemented_migrate_up::<$last_version> as MigrateUpFn,
+                        $last_name::deserialize as DeserializeFn,
+                        $last_name::serialize as SerializeFn,
+                    ),
+                )
+            ];
+
+            HashMap::from(migrations)
+        });
+    };
+}
+
+declare_migrations! {
+    mod v41 (41);
+    mod v42 (42);
+    mod v43 (43);
+    mod v44 (44);
+    mod v45 (45);
+    mod v46 (46);
+    mod v47 (47);
+
+    #[last]
+    mod v48 (48);
+
+    static MIGRATIONS: MigrationMap = { /* macro-generated */ };
+}
 
 pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
     let current_version = crate::version::detect_version(current)?;
