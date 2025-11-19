@@ -25,12 +25,25 @@ macro_rules! declare_migrations {
 
         #[doc = concat!("**v", $last_version, " (de)serialization.**")]
         ///
-        /// Migrating past this version is not supported, so no `migrate_up()` function is
-        /// provided.
+        /// Migrating past this version is not supported, so the `migrate_up()` function is a stub
+        /// that immediately errors.
         mod $last_name {
+            use std::any::Any;
+
             use $last_rustdoc_types as current;
 
             crate::declare_serialize_deserialize!();
+
+            /// Immediately returns an error that the given migration isn't yet supported.
+            pub fn migrate_up(_crate: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>> {
+                let current_version: u32 = $last_version;
+
+                Err(anyhow::anyhow!(
+                    "migrating from format version v{} to format version v{} is not yet supported",
+                    current_version,
+                    current_version + 1,
+                ))
+            }
         }
 
         static $migration_map: MigrationMap = LazyLock::new(|| {
@@ -48,7 +61,7 @@ macro_rules! declare_migrations {
                 (
                     $last_version,
                     (
-                        unimplemented_migrate_up::<$last_version> as MigrateUpFn,
+                        $last_name::migrate_up as MigrateUpFn,
                         $last_name::deserialize as DeserializeFn,
                         $last_name::serialize as SerializeFn,
                     ),
@@ -118,17 +131,4 @@ pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
 
     // Convert the untyped `Crate` back to a JSON string.
     (serialize)(crate_)
-}
-
-/// Panics when called, displaying an error that the given migration isn't yet supported.
-fn unimplemented_migrate_up<const N: usize>(_: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>> {
-    fn inner(n: usize) -> anyhow::Result<Box<dyn Any>> {
-        Err(anyhow::anyhow!(
-            "migrating from format version v{} to format version v{} is not yet supported",
-            n,
-            n + 1,
-        ))
-    }
-
-    inner(N)
 }
