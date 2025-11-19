@@ -180,6 +180,7 @@ dependencies = [
  "rustdoc-types 0.41.0",
  "rustdoc-types 0.46.1",
  "rustdoc-types 0.48.0",
+ "rustdoc-types 0.49.0",
  "serde",
  "serde_json",
  "winnow",
@@ -367,6 +368,17 @@ name = "rustdoc-types"
 version = "0.48.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "50fc89b069580755b97b9b75e8fb80d7f44be4da1d259840938818dd10109df6"
+dependencies = [
+ "rustc-hash",
+ "serde",
+ "serde_derive",
+]
+
+[[package]]
+name = "rustdoc-types"
+version = "0.49.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7acedf7ade997cc7bcccc53b31075f2b96d649f9dd56cf56d8ecab5ae8b340a"
 dependencies = [
  "rustc-hash",
  "serde",

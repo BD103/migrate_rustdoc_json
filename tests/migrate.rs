@@ -179,3 +179,43 @@ fn v46() {
         }
     }
 }
+
+#[test]
+fn v48() {
+    let ControlFlow::Continue(()) = needs_toolchain(48) else {
+        return;
+    };
+
+    let (source_json, migrated_json) = generate_and_migrate_to("tests/v48/v48.rs", 48, 49);
+
+    let query_expected = [
+        (
+            "$.index[?(@.name == 'do_not_optimize')].attrs",
+            json!(["#[optimize(none)]"]),
+            json!(["#[attr = Optimize(DoNotOptimize)]"]),
+        ),
+        (
+            "$.index[?(@.name == 'optimize_speed')].attrs",
+            json!(["#[optimize(speed)]"]),
+            json!(["#[attr = Optimize(Speed)]"]),
+        ),
+        (
+            "$.index[?(@.name == 'optimize_size')].attrs",
+            json!(["#[optimize(size)]"]),
+            json!(["#[attr = Optimize(Size)]"]),
+        ),
+    ];
+
+    for (query, source_expected, migrated_expected) in query_expected {
+        let source_results = source_json.query(query).unwrap();
+        let migrated_results = migrated_json.query(query).unwrap();
+
+        for actual in source_results {
+            assert_eq!(*actual, source_expected);
+        }
+
+        for actual in migrated_results {
+            assert_eq!(*actual, migrated_expected);
+        }
+    }
+}
