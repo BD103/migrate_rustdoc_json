@@ -1,5 +1,5 @@
 //! **v47 stub migration.**
-//! 
+//!
 //! Format version v47 does not exist. This module only exists to connect v46 and v48.
 
 use std::any::Any;
@@ -11,12 +11,12 @@ pub fn migrate_up(crate_: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>> {
 
 pub fn deserialize(_json: &str) -> anyhow::Result<Box<dyn Any>> {
     Err(anyhow::anyhow!(
-        "format version v47 does not exist, the given JSON is invalid"
+        "format version v47 does not exist, the input JSON is invalid"
     ))
 }
 
 pub fn serialize(_crate: Box<dyn Any>) -> anyhow::Result<String> {
     Err(anyhow::anyhow!(
-        "format version v47 does not exist, please select v46 or v48 instead"
+        "format version v47 does not exist, please migrate to v46 or v48 instead"
     ))
 }

@@ -179,7 +179,7 @@ mod parser {
         Empty,
     }
 
-    impl<'s> fmt::Display for ReprAttr<'s> {
+    impl fmt::Display for ReprAttr<'_> {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             match self {
                 Self::Int(int_type) => write!(f, "{int_type}"),

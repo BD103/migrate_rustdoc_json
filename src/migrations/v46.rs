@@ -68,7 +68,7 @@ impl MigrateUp for current::Item {
             inner,
         } = self;
 
-        for attr in attrs.iter_mut() {
+        for attr in &mut attrs {
             // If the attribute is some form of `#[inline]`, replace it with its structured form
             // instead.
             match attr.as_str() {
