@@ -219,3 +219,25 @@ fn v48() {
         }
     }
 }
+
+#[test]
+fn v49() {
+    let ControlFlow::Continue(()) = needs_toolchain(49) else {
+        return;
+    };
+
+    let (source_json, migrated_json) = generate_and_migrate_to("tests/v49/v49.rs", 49, 50);
+
+    let query = "$.index[?(@.name == 'cold')].attrs";
+
+    let source_results = source_json.query(query).unwrap();
+    let migrated_results = migrated_json.query(query).unwrap();
+
+    for actual in source_results {
+        assert_eq!(*actual, json!(["#[cold]"]));
+    }
+
+    for actual in migrated_results {
+        assert_eq!(*actual, json!(["#[attr = Cold]"]));
+    }
+}
