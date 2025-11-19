@@ -17,12 +17,21 @@ macro_rules! declare_migrations {
         $(mod $name:ident ($version:expr);)*
 
         #[last]
-        mod $last_name:ident ($last_version:expr);
+        mod $last_name:ident ($last_version:expr, $last_rustdoc_types:path);
 
         static $migration_map:ident: MigrationMap = {};
     } => {
         $(mod $name;)*
-        mod $last_name;
+
+        #[doc = concat!("**v", $last_version, " (de)serialization.**")]
+        ///
+        /// Migrating past this version is not supported, so no `migrate_up()` function is
+        /// provided.
+        mod $last_name {
+            use $last_rustdoc_types as current;
+
+            crate::declare_serialize_deserialize!();
+        }
 
         static $migration_map: MigrationMap = LazyLock::new(|| {
             let migrations = [
@@ -61,7 +70,7 @@ declare_migrations! {
     mod v47 (47);
 
     #[last]
-    mod v48 (48);
+    mod v48 (48, rustdoc_types_48);
 
     static MIGRATIONS: MigrationMap = { /* macro-generated */ };
 }
