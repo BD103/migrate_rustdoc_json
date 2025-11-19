@@ -1,5 +1,5 @@
 //! **v48 to v49 migration.**
-//! 
+//!
 //! The format for the `#[optimize]` family of attributes in `Item::attrs` has changed:
 //!
 //! |Before|After|
