@@ -1,4 +1,12 @@
 //! **v48 to v49 migration.**
+//! 
+//! The format for the `#[optimize]` family of attributes in `Item::attrs` has changed:
+//!
+//! |Before|After|
+//! |-|-|
+//! |`#[optimize(none)]`|`#[attr = Optimize(DoNotOptimize)]`|
+//! |`#[optimize(speed)]`|`#[attr = Optimize(Speed)]`|
+//! |`#[optimize(size)]`|`#[attr = Optimize(Size)]`|
 //!
 //! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0490---2025-06-23>
 
