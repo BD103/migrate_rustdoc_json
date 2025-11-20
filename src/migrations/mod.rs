@@ -14,13 +14,20 @@ type MigrationMap = LazyLock<HashMap<u32, (MigrateUpFn, DeserializeFn, Serialize
 /// A macro that generates the `mod v*;` statements and the [`MIGRATIONS`] map.
 macro_rules! declare_migrations {
     {
+        #[first]
+        mod $first_name:ident ($first_version:expr);
+
         $(mod $name:ident ($version:expr);)*
 
         #[last]
         mod $last_name:ident ($last_version:expr, $last_rustdoc_types:path);
 
-        static $migration_map:ident: MigrationMap = {};
+        static MIGRATIONS: MigrationMap = {};
+
+        pub const MINIMUM_VERSION: u32 = {};
+        pub const MAXIMUM_VERSION: u32 = {};
     } => {
+        mod $first_name;
         $(mod $name;)*
 
         #[doc = concat!("**v", $last_version, " (de)serialization.**")]
@@ -46,8 +53,16 @@ macro_rules! declare_migrations {
             }
         }
 
-        static $migration_map: MigrationMap = LazyLock::new(|| {
+        static MIGRATIONS: MigrationMap = LazyLock::new(|| {
             let migrations = [
+                (
+                    $first_version,
+                    (
+                        $first_name::migrate_up as MigrateUpFn,
+                        $first_name::deserialize as DeserializeFn,
+                        $first_name::serialize as SerializeFn,
+                    ),
+                ),
                 $(
                     (
                         $version,
@@ -70,11 +85,16 @@ macro_rules! declare_migrations {
 
             HashMap::from(migrations)
         });
+
+        pub const MINIMUM_VERSION: u32 = $first_version;
+        pub const MAXIMUM_VERSION: u32 = $last_version;
     };
 }
 
 declare_migrations! {
+    #[first]
     mod v41 (41);
+
     mod v42 (42);
     mod v43 (43);
     mod v44 (44);
@@ -88,6 +108,9 @@ declare_migrations! {
     mod v50 (50, rustdoc_types_50);
 
     static MIGRATIONS: MigrationMap = { /* macro-generated */ };
+
+    pub const MINIMUM_VERSION: u32 = { /* macro-generated */ };
+    pub const MAXIMUM_VERSION: u32 = { /* macro-generated */ };
 }
 
 pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
