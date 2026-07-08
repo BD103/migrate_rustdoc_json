@@ -858,7 +858,6 @@ macro_rules! impl_unchanged_migrations {
 
         $crate::impl_unchanged_migrations! { $($tt)* }
     };
-
     {} => {};
 }
 
