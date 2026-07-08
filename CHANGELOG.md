@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## Unreleased
 
 - **All Changes**: [`v0.4.0...main`](https://github.com/BD103/migrate_rustdoc_json/compare/v0.4.0...main)
-- **Format Versions**: v41..=v50
+- **Format Versions**: v41..=v51
 
 ## v0.4.0 - 2025-11-18
 
