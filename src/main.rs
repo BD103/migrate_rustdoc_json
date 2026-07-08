@@ -1,13 +1,15 @@
 use std::process::ExitCode;
 
-use anstream::{eprintln, println};
-use anstyle::{AnsiColor, Color, Style};
+use anstream::println;
 use anyhow::Context;
+
+use self::reporter::Reporter;
 
 mod args;
 mod macros;
 mod migrations;
 mod primitives;
+mod reporter;
 mod traits;
 mod version;
 
@@ -15,14 +17,12 @@ mod version;
 ///
 /// For the program logic, see [`migrate_rustdoc_json()`].
 fn main() -> ExitCode {
-    match migrate_rustdoc_json() {
+    let mut reporter = Reporter::default();
+
+    match migrate_rustdoc_json(&mut reporter) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
-            let style = Style::new()
-                .bold()
-                .fg_color(Some(Color::Ansi(AnsiColor::BrightRed)));
-
-            eprintln!("{style}Error{style:#}: {error:?}");
+            reporter.print_error_report(error);
 
             ExitCode::FAILURE
         }
@@ -30,18 +30,17 @@ fn main() -> ExitCode {
 }
 
 /// The main program logic.
-fn migrate_rustdoc_json() -> anyhow::Result<()> {
+fn migrate_rustdoc_json(reporter: &mut Reporter) -> anyhow::Result<()> {
     let args = args::parse_args()?;
+
+    reporter.configure(&args);
 
     let input = std::fs::read_to_string(&args.input)
         .with_context(|| format!("could not read `--input` file: {}", args.input.display()))?;
 
-    let output = self::migrations::migrate_up(&input, args.to_version.format_version())?;
+    let output = self::migrations::migrate_up(&input, args.to_version.format_version(), reporter)?;
 
-    eprintln!(
-        "{blue}Done!{blue:#} :D",
-        blue = Style::new().fg_color(Some(Color::Ansi(AnsiColor::Blue))),
-    );
+    reporter.print_success_report();
 
     println!("{output}");
 

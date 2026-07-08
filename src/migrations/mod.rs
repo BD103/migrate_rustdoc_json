@@ -2,8 +2,7 @@
 
 use std::{any::Any, collections::HashMap, sync::LazyLock};
 
-use anstream::eprintln;
-use anstyle::{AnsiColor, Color, Style};
+use crate::reporter::Reporter;
 
 type MigrateUpFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>>;
 type DeserializeFn = fn(&str) -> anyhow::Result<Box<dyn Any>>;
@@ -114,39 +113,31 @@ declare_migrations! {
     pub const MAXIMUM_VERSION: u32 = { /* macro-generated */ };
 }
 
-pub fn migrate_up(current: &str, to_version: u32) -> anyhow::Result<String> {
-    let current_version = crate::version::detect_version(current)?;
+pub fn migrate_up(
+    current: &str,
+    to_version: u32,
+    reporter: &mut Reporter,
+) -> anyhow::Result<String> {
+    let original_version = crate::version::detect_version(current)?;
 
-    if current_version > to_version {
+    if original_version > to_version {
         return Err(anyhow::anyhow!(
-            "`--input` format version {current_version} is greater than `--to-version` {to_version}"
+            "`--input` format version {original_version} is greater than `--to-version` {to_version}"
         )
         .context("downgrading to an older format version is not supported"));
     }
 
-    let deserialize = MIGRATIONS[&current_version].1;
+    let deserialize = MIGRATIONS[&original_version].1;
 
-    eprintln!(
-        "{blue}Migrating JSON with format version {bold}v{current_version}{bold:#}{blue:#}",
-        blue = Style::new().fg_color(Some(Color::Ansi(AnsiColor::Blue))),
-        bold = Style::new().bold(),
-    );
+    reporter.begin_migrating(original_version);
 
     // Convert the JSON string into a untyped `Crate`.
     let mut crate_ = (deserialize)(current)?;
 
-    for i in current_version..to_version {
+    for i in original_version..to_version {
         let migrate_up = MIGRATIONS[&i].0;
 
-        eprintln!(
-            "\t{dim}...to{dim:#} {blue}v{version}{blue:#}",
-            version = i + 1,
-            dim = Style::new().dimmed().italic(),
-            blue = Style::new()
-                .fg_color(Some(Color::Ansi(AnsiColor::Blue)))
-                .bold()
-                .italic()
-        );
+        reporter.migrating_to(i + 1);
 
         // Migrate the untyped `Crate` through all versions between the input and the desired
         // version.
