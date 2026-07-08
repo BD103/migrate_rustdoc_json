@@ -33,7 +33,7 @@ macro_rules! impl_unchanged_migrations {
         impl $crate::traits::MigrateUp for current::Crate {
             type Up = up::Crate;
 
-            fn migrate_up(self) -> Self::Up {
+            fn migrate_up(self, reporter: &mut $crate::reporter::Reporter) -> Self::Up {
                 let Self {
                     root,
                     crate_version,
@@ -45,12 +45,12 @@ macro_rules! impl_unchanged_migrations {
                 } = self;
 
                 up::Crate {
-                    root: root.migrate_up(),
-                    crate_version: crate_version.migrate_up(),
-                    includes_private: includes_private.migrate_up(),
-                    index: index.migrate_up(),
-                    paths: paths.migrate_up(),
-                    external_crates: external_crates.migrate_up(),
+                    root: root.migrate_up(reporter),
+                    crate_version: crate_version.migrate_up(reporter),
+                    includes_private: includes_private.migrate_up(reporter),
+                    index: index.migrate_up(reporter),
+                    paths: paths.migrate_up(reporter),
+                    external_crates: external_crates.migrate_up(reporter),
                     // Bump the format version.
                     format_version: format_version + 1,
                 }
@@ -63,7 +63,7 @@ macro_rules! impl_unchanged_migrations {
         impl $crate::traits::MigrateUp for current::Crate {
             type Up = up::Crate;
 
-            fn migrate_up(self) -> Self::Up {
+            fn migrate_up(self, reporter: &mut $crate::reporter::Reporter) -> Self::Up {
                 let Self {
                     root,
                     crate_version,
@@ -76,13 +76,13 @@ macro_rules! impl_unchanged_migrations {
                 } = self;
 
                 up::Crate {
-                    root: root.migrate_up(),
-                    crate_version: crate_version.migrate_up(),
-                    includes_private: includes_private.migrate_up(),
-                    index: index.migrate_up(),
-                    paths: paths.migrate_up(),
-                    external_crates: external_crates.migrate_up(),
-                    target: target.migrate_up(),
+                    root: root.migrate_up(reporter),
+                    crate_version: crate_version.migrate_up(reporter),
+                    includes_private: includes_private.migrate_up(reporter),
+                    index: index.migrate_up(reporter),
+                    paths: paths.migrate_up(reporter),
+                    external_crates: external_crates.migrate_up(reporter),
+                    target: target.migrate_up(reporter),
                     // Bump the format version.
                     format_version: format_version + 1,
                 }
@@ -931,13 +931,13 @@ macro_rules! impl_single_unchanged_migration {
         impl $crate::traits::MigrateUp for current::$struct {
             type Up = up::$struct;
 
-            fn migrate_up(self) -> Self::Up {
+            fn migrate_up(self, #[allow(unused_variables)] reporter: &mut $crate::reporter::Reporter) -> Self::Up {
                 let Self {
                     $($field),*
                 } = self;
 
                 up::$struct {
-                    $($field: $field.migrate_up()),*
+                    $($field: $field.migrate_up(reporter)),*
                 }
             }
         }
@@ -948,11 +948,11 @@ macro_rules! impl_single_unchanged_migration {
         impl $crate::traits::MigrateUp for current::$struct {
             type Up = up::$struct;
 
-            fn migrate_up(self) -> Self::Up {
+            fn migrate_up(self, #[allow(unused_variables)] reporter: &mut $crate::reporter::Reporter) -> Self::Up {
                 let Self($($field),*) = self;
 
                 up::$struct (
-                    $($field.migrate_up()),*
+                    $($field.migrate_up(reporter)),*
                 )
             }
         }
@@ -987,19 +987,19 @@ macro_rules! impl_single_unchanged_migration {
         impl $crate::traits::MigrateUp for current::$enum {
             type Up = up::$enum;
 
-            fn migrate_up(self) -> Self::Up {
+            fn migrate_up(self, #[allow(unused_variables)] reporter: &mut $crate::reporter::Reporter) -> Self::Up {
                 match self {
                     $($(
                         Self::$struct_variant {
                             $($struct_field),*
                         } => up::$enum::$struct_variant {
-                            $($struct_field: $struct_field.migrate_up()),*
+                            $($struct_field: $struct_field.migrate_up(reporter)),*
                         },
                     )*)?
 
                     $($(
                         Self::$tuple_variant($($tuple_field),*) => up::$enum::$tuple_variant(
-                            $($tuple_field.migrate_up()),*
+                            $($tuple_field.migrate_up(reporter)),*
                         ),
                     )*)?
 
@@ -1038,12 +1038,12 @@ macro_rules! declare_migrate_up {
         ///
         #[doc = concat!("`current_crate` must be an untyped [`rustdoc_types_", $current, "::Crate`].")]
         /// If it is not, this function will panic.
-        pub fn migrate_up(current_crate: ::std::boxed::Box<dyn ::std::any::Any>) -> ::anyhow::Result<::std::boxed::Box<dyn ::std::any::Any>> {
+        pub fn migrate_up(current_crate: ::std::boxed::Box<dyn ::std::any::Any>, reporter: &mut $crate::reporter::Reporter) -> ::anyhow::Result<::std::boxed::Box<dyn ::std::any::Any>> {
             use $crate::traits::MigrateUp;
 
             let current_crate = current_crate.downcast::<current::Crate>().unwrap();
 
-            let up_crate = (*current_crate).migrate_up();
+            let up_crate = (*current_crate).migrate_up(reporter);
 
             Ok(::std::boxed::Box::new(up_crate))
         }

@@ -9,7 +9,7 @@
 use rustdoc_types_43 as current;
 use rustdoc_types_44 as up;
 
-use crate::{declare_migrate_up, declare_serialize_deserialize, traits::MigrateUp};
+use crate::{declare_migrate_up, declare_serialize_deserialize, reporter::Reporter, traits::MigrateUp};
 
 declare_migrate_up!(43, 44);
 declare_serialize_deserialize!();
@@ -18,7 +18,7 @@ declare_serialize_deserialize!();
 impl MigrateUp for current::Crate {
     type Up = up::Crate;
 
-    fn migrate_up(self) -> Self::Up {
+    fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
         let Self {
             root,
             crate_version,
@@ -30,12 +30,12 @@ impl MigrateUp for current::Crate {
         } = self;
 
         up::Crate {
-            root: root.migrate_up(),
-            crate_version: crate_version.migrate_up(),
-            includes_private: includes_private.migrate_up(),
-            index: index.migrate_up(),
-            paths: paths.migrate_up(),
-            external_crates: external_crates.migrate_up(),
+            root: root.migrate_up(reporter),
+            crate_version: crate_version.migrate_up(reporter),
+            includes_private: includes_private.migrate_up(reporter),
+            index: index.migrate_up(reporter),
+            paths: paths.migrate_up(reporter),
+            external_crates: external_crates.migrate_up(reporter),
             target: up::Target {
                 // Currently we leave the target triple empty, as we can only guess if the JSON was
                 // built on the same device migrating it.

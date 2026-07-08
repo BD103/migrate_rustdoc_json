@@ -6,7 +6,7 @@ use std::{
     path::PathBuf,
 };
 
-use crate::traits::MigrateUp;
+use crate::{reporter::Reporter, traits::MigrateUp};
 
 /// Implements [`MigrateUp`] for types that are not versioned, usually because they are not within
 /// `rustdoc_types`.
@@ -20,7 +20,7 @@ macro_rules! impl_unversioned_migrations {
             impl $crate::traits::MigrateUp for $primitive {
                 type Up = Self;
 
-                fn migrate_up(self) -> Self::Up {
+                fn migrate_up(self, _reporter: &mut $crate::reporter::Reporter) -> Self::Up {
                     self
                 }
             }
@@ -49,9 +49,9 @@ macro_rules! impl_tuple_migrations {
         impl<$($t: MigrateUp),*> MigrateUp for ($($t,)*) {
             type Up = ($($t::Up,)*);
 
-            fn migrate_up(self) -> Self::Up {
+            fn migrate_up(self, reporter: &mut $crate::reporter::Reporter) -> Self::Up {
                 (
-                    $(self.$n.migrate_up(),)*
+                    $(self.$n.migrate_up(reporter),)*
                 )
             }
         }
@@ -64,24 +64,27 @@ impl_tuple_migrations!((0, T0), (1, T1));
 impl<T: MigrateUp> MigrateUp for Option<T> {
     type Up = Option<T::Up>;
 
-    fn migrate_up(self) -> Self::Up {
-        self.map(MigrateUp::migrate_up)
+    fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
+        match self {
+            Some(x) => Some(x.migrate_up(reporter)),
+            None => None,
+        }
     }
 }
 
 impl<T: MigrateUp> MigrateUp for Box<T> {
     type Up = Box<T::Up>;
 
-    fn migrate_up(self) -> Self::Up {
-        Box::new((*self).migrate_up())
+    fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
+        Box::new((*self).migrate_up(reporter))
     }
 }
 
 impl<T: MigrateUp> MigrateUp for Vec<T> {
     type Up = Vec<T::Up>;
 
-    fn migrate_up(self) -> Self::Up {
-        self.into_iter().map(MigrateUp::migrate_up).collect()
+    fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
+        self.into_iter().map(move |x| x.migrate_up(reporter)).collect()
     }
 }
 
@@ -91,9 +94,9 @@ where
 {
     type Up = HashMap<K::Up, V::Up, S>;
 
-    fn migrate_up(self) -> Self::Up {
+    fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
         self.into_iter()
-            .map(|(k, v)| (k.migrate_up(), v.migrate_up()))
+            .map(|(k, v)| (k.migrate_up(reporter), v.migrate_up(reporter)))
             .collect()
     }
 }

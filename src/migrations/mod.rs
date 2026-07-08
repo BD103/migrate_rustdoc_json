@@ -4,7 +4,7 @@ use std::{any::Any, collections::HashMap, sync::LazyLock};
 
 use crate::reporter::Reporter;
 
-type MigrateUpFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>>;
+type MigrateUpFn = fn(crate_: Box<dyn Any>, reporter: &mut Reporter) -> anyhow::Result<Box<dyn Any>>;
 type DeserializeFn = fn(&str) -> anyhow::Result<Box<dyn Any>>;
 type SerializeFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<String>;
 
@@ -41,7 +41,7 @@ macro_rules! declare_migrations {
             crate::declare_serialize_deserialize!();
 
             /// Immediately returns an error that the given migration isn't yet supported.
-            pub fn migrate_up(_crate: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>> {
+            pub fn migrate_up(_crate: Box<dyn Any>, _reporter: &mut $crate::reporter::Reporter) -> anyhow::Result<Box<dyn Any>> {
                 let current_version: u32 = $last_version;
 
                 Err(anyhow::anyhow!(
@@ -141,7 +141,7 @@ pub fn migrate_up(
 
         // Migrate the untyped `Crate` through all versions between the input and the desired
         // version.
-        crate_ = (migrate_up)(crate_)?;
+        crate_ = (migrate_up)(crate_, reporter)?;
     }
 
     let serialize = MIGRATIONS[&to_version].2;

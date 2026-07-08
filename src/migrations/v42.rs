@@ -57,7 +57,7 @@ use rustdoc_types_42 as current;
 use rustdoc_types_43 as up;
 use winnow::Parser;
 
-use crate::{declare_migrate_up, declare_serialize_deserialize, traits::MigrateUp};
+use crate::{declare_migrate_up, declare_serialize_deserialize, reporter::Reporter, traits::MigrateUp};
 
 declare_migrate_up!(42, 43);
 declare_serialize_deserialize!();
@@ -65,7 +65,7 @@ declare_serialize_deserialize!();
 impl MigrateUp for current::Item {
     type Up = up::Item;
 
-    fn migrate_up(self) -> Self::Up {
+    fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
         let current::Item {
             id,
             crate_id,
@@ -92,16 +92,16 @@ impl MigrateUp for current::Item {
             .collect();
 
         up::Item {
-            id: id.migrate_up(),
+            id: id.migrate_up(reporter),
             crate_id,
             name,
-            span: span.migrate_up(),
-            visibility: visibility.migrate_up(),
+            span: span.migrate_up(reporter),
+            visibility: visibility.migrate_up(reporter),
             docs,
-            links: links.migrate_up(),
+            links: links.migrate_up(reporter),
             attrs,
-            deprecation: deprecation.migrate_up(),
-            inner: inner.migrate_up(),
+            deprecation: deprecation.migrate_up(reporter),
+            inner: inner.migrate_up(reporter),
         }
     }
 }

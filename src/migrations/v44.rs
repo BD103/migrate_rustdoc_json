@@ -8,7 +8,7 @@
 use rustdoc_types_44 as current;
 use rustdoc_types_45 as up;
 
-use crate::{declare_migrate_up, declare_serialize_deserialize, traits::MigrateUp};
+use crate::{declare_migrate_up, declare_serialize_deserialize, reporter::Reporter, traits::MigrateUp};
 
 declare_migrate_up!(44, 45);
 declare_serialize_deserialize!();
@@ -17,7 +17,7 @@ declare_serialize_deserialize!();
 impl MigrateUp for current::Span {
     type Up = up::Span;
 
-    fn migrate_up(self) -> Self::Up {
+    fn migrate_up(self, _reporter: &mut Reporter) -> Self::Up {
         let Self {
             filename,
             begin: (begin_line, begin_col),

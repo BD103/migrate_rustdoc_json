@@ -8,7 +8,7 @@ use rustdoc_types_49 as current;
 use rustdoc_types_50 as up;
 
 use crate::{
-    declare_migrate_up, declare_serialize_deserialize, impl_unchanged_migrations, traits::MigrateUp,
+    declare_migrate_up, declare_serialize_deserialize, impl_unchanged_migrations, reporter::Reporter, traits::MigrateUp,
 };
 
 declare_migrate_up!(49, 50);
@@ -17,7 +17,7 @@ declare_serialize_deserialize!();
 impl MigrateUp for current::Item {
     type Up = up::Item;
 
-    fn migrate_up(self) -> Self::Up {
+    fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
         let Self {
             id,
             crate_id,
@@ -38,16 +38,16 @@ impl MigrateUp for current::Item {
         }
 
         up::Item {
-            id: id.migrate_up(),
-            crate_id: crate_id.migrate_up(),
-            name: name.migrate_up(),
-            span: span.migrate_up(),
-            visibility: visibility.migrate_up(),
-            docs: docs.migrate_up(),
-            links: links.migrate_up(),
-            attrs: attrs.migrate_up(),
-            deprecation: deprecation.migrate_up(),
-            inner: inner.migrate_up(),
+            id: id.migrate_up(reporter),
+            crate_id: crate_id.migrate_up(reporter),
+            name: name.migrate_up(reporter),
+            span: span.migrate_up(reporter),
+            visibility: visibility.migrate_up(reporter),
+            docs: docs.migrate_up(reporter),
+            links: links.migrate_up(reporter),
+            attrs: attrs.migrate_up(reporter),
+            deprecation: deprecation.migrate_up(reporter),
+            inner: inner.migrate_up(reporter),
         }
     }
 }

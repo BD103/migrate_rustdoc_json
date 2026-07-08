@@ -4,7 +4,9 @@
 
 use std::any::Any;
 
-pub fn migrate_up(crate_: Box<dyn Any>) -> anyhow::Result<Box<dyn Any>> {
+use crate::reporter::Reporter;
+
+pub fn migrate_up(crate_: Box<dyn Any>, _reporter: &mut Reporter) -> anyhow::Result<Box<dyn Any>> {
     // No-op, as the given `Crate` is already migrated to v48.
     Ok(crate_)
 }
