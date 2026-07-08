@@ -103,9 +103,10 @@ declare_migrations! {
     mod v47 (47);
     mod v48 (48);
     mod v49 (49);
+    mod v50 (50);
 
     #[last]
-    mod v50 (50, rustdoc_types_50);
+    mod v51 (51, rustdoc_types_51);
 
     static MIGRATIONS: MigrationMap = { /* macro-generated */ };
 
