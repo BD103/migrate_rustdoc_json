@@ -1,7 +1,7 @@
 //! **v45 to v46 migration.**
 //!
 //! Rustdoc used to only include `#[repr(transparent)]` in its output if there was at least one
-//! public ZST in a type's signature. While this makes sense for the HTML output (don't include
+//! public field in a type's signature. While this makes sense for the HTML output (don't include
 //! `#[repr(transparent)]` if the user can't do anything with the information), it doesn't for the
 //! JSON output. In v46, Rustdoc now always includes `#[repr(transparent)]` for types that use it,
 //! no matter what visibility their fields are.
