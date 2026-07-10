@@ -1030,7 +1030,7 @@ macro_rules! impl_single_unchanged_migration {
 #[macro_export]
 macro_rules! declare_migrate_up {
     ($current:literal, $up:literal) => {
-        #[doc = concat!("Migrates a v", $current, " `Crate` to a ", $up, " `Crate`.")]
+        #[doc = concat!("Migrates a v", $current, " `Crate` to a v", $up, " `Crate`.")] // TODO
         ///
         #[doc = concat!("The returned value is an untyped [`rustdoc_types_", $up, "::Crate`].")]
         ///
