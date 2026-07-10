@@ -9,7 +9,8 @@ use rustdoc_types_50 as current;
 use rustdoc_types_51 as up;
 
 use crate::{
-    declare_migrate_up, declare_serialize_deserialize, impl_unchanged_migrations, reporter::Reporter, traits::MigrateUp,
+    declare_migrate_up, declare_serialize_deserialize, impl_unchanged_migrations,
+    reporter::Reporter, traits::MigrateUp,
 };
 
 declare_migrate_up!(50, 51);
@@ -19,7 +20,11 @@ impl MigrateUp for current::AssocItemConstraint {
     type Up = up::AssocItemConstraint;
 
     fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
-        let Self { name, args, binding } = self;
+        let Self {
+            name,
+            args,
+            binding,
+        } = self;
 
         up::AssocItemConstraint {
             name: name.migrate_up(reporter),
@@ -78,7 +83,9 @@ impl MigrateUp for current::Type {
             }
             Self::Tuple(types) => up::Type::Tuple(types.migrate_up(reporter)),
             Self::Slice(type_) => up::Type::Slice(type_.migrate_up(reporter)),
-            Self::ImplTrait(generic_bounds) => up::Type::ImplTrait(generic_bounds.migrate_up(reporter)),
+            Self::ImplTrait(generic_bounds) => {
+                up::Type::ImplTrait(generic_bounds.migrate_up(reporter))
+            }
             Self::Infer => up::Type::Infer,
         }
     }

@@ -14,7 +14,8 @@ use rustdoc_types_48 as current;
 use rustdoc_types_49 as up;
 
 use crate::{
-    declare_migrate_up, declare_serialize_deserialize, impl_unchanged_migrations, reporter::Reporter, traits::MigrateUp,
+    declare_migrate_up, declare_serialize_deserialize, impl_unchanged_migrations,
+    reporter::Reporter, traits::MigrateUp,
 };
 
 declare_migrate_up!(48, 49);

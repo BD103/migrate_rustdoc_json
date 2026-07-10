@@ -4,7 +4,8 @@ use std::{any::Any, collections::HashMap, sync::LazyLock};
 
 use crate::reporter::Reporter;
 
-type MigrateUpFn = fn(crate_: Box<dyn Any>, reporter: &mut Reporter) -> anyhow::Result<Box<dyn Any>>;
+type MigrateUpFn =
+    fn(crate_: Box<dyn Any>, reporter: &mut Reporter) -> anyhow::Result<Box<dyn Any>>;
 type DeserializeFn = fn(&str) -> anyhow::Result<Box<dyn Any>>;
 type SerializeFn = fn(crate_: Box<dyn Any>) -> anyhow::Result<String>;
 

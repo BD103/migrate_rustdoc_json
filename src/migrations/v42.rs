@@ -57,7 +57,9 @@ use rustdoc_types_42 as current;
 use rustdoc_types_43 as up;
 use winnow::Parser;
 
-use crate::{declare_migrate_up, declare_serialize_deserialize, reporter::Reporter, traits::MigrateUp};
+use crate::{
+    declare_migrate_up, declare_serialize_deserialize, reporter::Reporter, traits::MigrateUp,
+};
 
 declare_migrate_up!(42, 43);
 declare_serialize_deserialize!();

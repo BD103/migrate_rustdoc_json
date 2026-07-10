@@ -65,10 +65,7 @@ impl<T: MigrateUp> MigrateUp for Option<T> {
     type Up = Option<T::Up>;
 
     fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
-        match self {
-            Some(x) => Some(x.migrate_up(reporter)),
-            None => None,
-        }
+        self.map(|x| x.migrate_up(reporter))
     }
 }
 
@@ -84,7 +81,9 @@ impl<T: MigrateUp> MigrateUp for Vec<T> {
     type Up = Vec<T::Up>;
 
     fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
-        self.into_iter().map(move |x| x.migrate_up(reporter)).collect()
+        self.into_iter()
+            .map(move |x| x.migrate_up(reporter))
+            .collect()
     }
 }
 
