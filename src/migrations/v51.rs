@@ -1,7 +1,7 @@
 //! **v51 to v52 migration.**
 //!
 //! The format for `#[must_use]` attributes in `Item::attrs` has changed:
-//! 
+//!
 //! |Before|After|
 //! |-|-|
 //! |`#[must_use]`|`#[attr = MustUse]`|
