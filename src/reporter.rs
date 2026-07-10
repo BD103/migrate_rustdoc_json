@@ -5,7 +5,10 @@ use anstyle::{AnsiColor, Color, Style};
 
 /// Struct for reporting information to the user.
 #[derive(Default)]
-pub struct Reporter {}
+pub struct Reporter {
+    currently_migrating_to: u32,
+    caveats: Vec<Caveat>,
+}
 
 impl Reporter {
     /// Configures a reporter to obey the CLI arguments.
@@ -23,7 +26,9 @@ impl Reporter {
     }
 
     /// Tells the user we are migrating the JSON to a specific version.
-    pub fn migrating_to(&self, version: u32) {
+    pub fn migrating_to(&mut self, version: u32) {
+        self.currently_migrating_to = version;
+
         eprintln!(
             "\t{dim}...to{dim:#} {blue}v{version}{blue:#}",
             dim = Style::new().dimmed().italic(),
@@ -34,12 +39,38 @@ impl Reporter {
         );
     }
 
+    /// Reports a caveat, that there was an imperfect migration that may require user intervention.
+    pub fn caveat(&mut self, message: String) {
+        self.caveats.push(Caveat {
+            message,
+            while_migrating_to: self.currently_migrating_to,
+        });
+    }
+
     /// Prints the final report after the migration has succeeded.
     pub fn print_success_report(&self) {
         eprintln!(
             "{blue}Done!{blue:#} :D",
             blue = Style::new().fg_color(Some(Color::Ansi(AnsiColor::Blue))),
         );
+
+        if !self.caveats.is_empty() {
+            eprintln!(
+                "\n{yellow}Caveats:{yellow:#}",
+                yellow = Style::new()
+                    .fg_color(Some(Color::Ansi(AnsiColor::Yellow)))
+                    .bold()
+            );
+
+            for caveat in self.caveats.iter() {
+                eprintln!(
+                    "\t- {msg} {dim}(while migrating to v{migrating_to}){dim:#}",
+                    msg = caveat.message,
+                    migrating_to = caveat.while_migrating_to,
+                    dim = Style::new().dimmed().italic(),
+                );
+            }
+        }
     }
 
     /// Prints the final report after the migration has failed.
@@ -50,4 +81,10 @@ impl Reporter {
 
         eprintln!("{style}Error{style:#}: {error:?}");
     }
+}
+
+/// A caveat, used to note imperfect migrations that may require user intervention.
+struct Caveat {
+    message: String,
+    while_migrating_to: u32,
 }

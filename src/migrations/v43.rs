@@ -9,7 +9,9 @@
 use rustdoc_types_43 as current;
 use rustdoc_types_44 as up;
 
-use crate::{declare_migrate_up, declare_serialize_deserialize, reporter::Reporter, traits::MigrateUp};
+use crate::{
+    declare_migrate_up, declare_serialize_deserialize, reporter::Reporter, traits::MigrateUp,
+};
 
 declare_migrate_up!(43, 44);
 declare_serialize_deserialize!();
@@ -19,6 +21,8 @@ impl MigrateUp for current::Crate {
     type Up = up::Crate;
 
     fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
+        reporter.caveat("`target.triple` and `target.target_features` are empty, as we cannot deduce their values".to_owned());
+
         let Self {
             root,
             crate_version,

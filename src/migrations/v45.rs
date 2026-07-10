@@ -15,13 +15,42 @@
 use rustdoc_types_45 as current;
 use rustdoc_types_46 as up;
 
-use crate::{declare_migrate_up, declare_serialize_deserialize, impl_unchanged_migrations};
+use crate::{declare_migrate_up, declare_serialize_deserialize, impl_unchanged_migrations, reporter::Reporter};
 
 declare_migrate_up!(45, 46);
 declare_serialize_deserialize!();
 
+impl crate::traits::MigrateUp for current::Crate {
+    type Up = up::Crate;
+
+    fn migrate_up(self, reporter: &mut Reporter) -> Self::Up {
+        reporter.caveat("`#[repr(transparent)]` types with only private fields may be missing `#[repr(transparent)]`".to_owned());
+
+        let Self {
+            root,
+            crate_version,
+            includes_private,
+            index,
+            paths,
+            external_crates,
+            target,
+            format_version,
+        } = self;
+
+        up::Crate {
+            root: root.migrate_up(reporter),
+            crate_version: crate_version.migrate_up(reporter),
+            includes_private: includes_private.migrate_up(reporter),
+            index: index.migrate_up(reporter),
+            paths: paths.migrate_up(reporter),
+            external_crates: external_crates.migrate_up(reporter),
+            target: target.migrate_up(reporter),
+            format_version: format_version + 1,
+        }
+    }
+}
+
 impl_unchanged_migrations! {
-    Crate@v44,
     AssocItemConstraint,
     Constant,
     Deprecation,
