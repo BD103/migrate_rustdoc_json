@@ -241,3 +241,38 @@ fn v49() {
         assert_eq!(*actual, json!(["#[attr = Cold]"]));
     }
 }
+
+#[test]
+fn v51() {
+    let ControlFlow::Continue(()) = needs_toolchain(51) else {
+        return;
+    };
+
+    let (source_json, migrated_json) = generate_and_migrate_to("tests/v51/v51.rs", 51, 52);
+
+    let query_expected = [
+        (
+            "$.index[?(@.name == 'without_message')].attrs",
+            json!(["#[must_use]"]),
+            json!(["#[attr = MustUse]"]),
+        ),
+        (
+            "$.index[?(@.name == 'with_message')].attrs",
+            json!(["#[must_use = \"custom message\"]"]),
+            json!(["#[attr = MustUse {reason: \"custom message\"}]"]),
+        ),
+    ];
+
+    for (query, source_expected, migrated_expected) in query_expected {
+        let source_results = source_json.query(query).unwrap();
+        let migrated_results = migrated_json.query(query).unwrap();
+
+        for actual in source_results {
+            assert_eq!(*actual, source_expected);
+        }
+
+        for actual in migrated_results {
+            assert_eq!(*actual, migrated_expected);
+        }
+    }
+}
