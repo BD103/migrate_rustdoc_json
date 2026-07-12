@@ -43,3 +43,6 @@ rustdoc_types_52 = { version = "0.52", package = "rustdoc-types", features = ["r
 [dev-dependencies]
 # Querying JSON, used for simpler testing
 jsonpath-rust = "1.0.2"
+
+# Prettier assertion messages with colorful diffs
+pretty_assertions = "1.4.1"
