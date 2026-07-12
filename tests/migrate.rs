@@ -9,7 +9,7 @@ use utils::{generate_and_migrate_to, needs_toolchain, query_both};
 use self::harness::MigrationTest;
 
 #[test]
-fn v42() {
+fn v42_to_v43() {
     MigrationTest::new(42, 43)
         .query(
             "$.index[?(@.name == 'ReprRust')].attrs",
@@ -62,7 +62,7 @@ fn v42() {
 }
 
 #[test]
-fn v43() {
+fn v43_to_v44() {
     let ControlFlow::Continue(()) = needs_toolchain(43) else {
         return;
     };
@@ -78,7 +78,7 @@ fn v43() {
 }
 
 #[test]
-fn v44() {
+fn v44_to_v45() {
     let ControlFlow::Continue(()) = needs_toolchain(44) else {
         return;
     };
@@ -101,7 +101,7 @@ fn v44() {
 }
 
 #[test]
-fn v45() {
+fn v45_to_v46() {
     MigrationTest::new(45, 46)
         .query(
             "$.index[?(@.name == 'TransparentPub')].attrs",
@@ -117,7 +117,7 @@ fn v45() {
 }
 
 #[test]
-fn v46() {
+fn v46_to_v48() {
     MigrationTest::new(46, 48)
         .query(
             "$.index[?(@.name == 'inline_hint')].attrs",
@@ -138,7 +138,7 @@ fn v46() {
 }
 
 #[test]
-fn v48() {
+fn v48_to_v49() {
     MigrationTest::new(48, 49)
         .query(
             "$.index[?(@.name == 'do_not_optimize')].attrs",
@@ -159,7 +159,7 @@ fn v48() {
 }
 
 #[test]
-fn v49() {
+fn v49_to_v50() {
     MigrationTest::new(49, 50)
         .query(
             "$.index[?(@.name == 'cold')].attrs",
@@ -170,7 +170,7 @@ fn v49() {
 }
 
 #[test]
-fn v51() {
+fn v51_to_v52() {
     MigrationTest::new(51, 52)
         .query(
             "$.index[?(@.name == 'without_message')].attrs",
