@@ -6,7 +6,7 @@ use std::ops::ControlFlow;
 use serde_json::{Value, json};
 use utils::{generate_and_migrate_to, needs_toolchain, query_both};
 
-use self::harness::MigrationTest;
+use self::{harness::MigrationTest, utils::GeneratedAndMigrated};
 
 #[test]
 fn v42_to_v43() {
@@ -67,7 +67,8 @@ fn v43_to_v44() {
         return;
     };
 
-    let (_, migrated_json) = generate_and_migrate_to("tests/v43/v43.rs", 43, 44);
+    let GeneratedAndMigrated { migrated_json, .. } =
+        generate_and_migrate_to("tests/v43/v43.rs", 43, 44);
 
     let expected = json!({
         "triple": "",
@@ -83,7 +84,11 @@ fn v44_to_v45() {
         return;
     };
 
-    let (original_json, migrated_json) = generate_and_migrate_to("tests/v44/v44.rs", 44, 45);
+    let GeneratedAndMigrated {
+        original_json,
+        migrated_json,
+        ..
+    } = generate_and_migrate_to("tests/v44/v44.rs", 44, 45);
 
     let query = "$.index[*].span['begin', 'end']";
 

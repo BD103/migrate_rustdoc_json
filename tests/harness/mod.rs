@@ -3,7 +3,7 @@ use std::{ops::ControlFlow, path::PathBuf};
 use jsonpath_rust::JsonPath;
 use pretty_assertions::assert_eq;
 
-use crate::utils::{generate_and_migrate_to, needs_toolchain};
+use crate::utils::{GeneratedAndMigrated, generate_and_migrate_to, needs_toolchain};
 
 /// A builder that configures and runs a migration test.
 ///
@@ -56,7 +56,15 @@ impl MigrationTest {
             return;
         };
 
-        let (original_json, migrated_json) = generate_and_migrate_to(
+        let ControlFlow::Continue(()) = needs_toolchain(self.migrated_format_version) else {
+            return;
+        };
+
+        let GeneratedAndMigrated {
+            original_json,
+            new_json,
+            migrated_json,
+        } = generate_and_migrate_to(
             self.path,
             self.original_format_version,
             self.migrated_format_version,
@@ -69,6 +77,7 @@ impl MigrationTest {
         } in self.queries
         {
             let original_results = original_json.query_with_path(query).unwrap();
+            let new_results = new_json.query_with_path(query).unwrap();
             let migrated_results = migrated_json.query_with_path(query).unwrap();
 
             for original_result in original_results {
@@ -78,6 +87,16 @@ impl MigrationTest {
                     "original result does not match expected value, query {} at path {}",
                     query,
                     original_result.path()
+                );
+            }
+
+            for new_result in new_results {
+                assert_eq!(
+                    new_result.clone().val(),
+                    &migrated_expected,
+                    "new result does not match expected value, query {} at path {}",
+                    query,
+                    new_result.path()
                 );
             }
 

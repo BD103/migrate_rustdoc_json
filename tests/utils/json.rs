@@ -10,15 +10,23 @@ use std::{
 use jsonpath_rust::JsonPath;
 use serde_json::Value;
 
+pub struct GeneratedAndMigrated {
+    pub original_json: Value,
+    pub new_json: Value,
+    pub migrated_json: Value,
+}
+
 pub fn generate_and_migrate_to(
     source: impl AsRef<Path>,
     original_format_version: u32,
     migrated_format_version: u32,
-) -> (Value, Value) {
-    let original_path = generate_json(source.as_ref(), original_format_version);
+) -> GeneratedAndMigrated {
+    let original_path = generate_json(source.as_ref(), original_format_version, "original.json");
+    let new_path = generate_json(source.as_ref(), migrated_format_version, "new.json");
     let migrated_path = migrate_json(&original_path, migrated_format_version);
 
     let original_json = read_json(&original_path);
+    let new_json = read_json(&new_path);
     let migrated_json = read_json(&migrated_path);
 
     assert_eq!(
@@ -29,11 +37,22 @@ pub fn generate_and_migrate_to(
     );
 
     assert_eq!(
+        new_json["format_version"],
+        migrated_format_version,
+        "toolchain {toolchain} failed to generate JSON with the expected format version v{migrated_format_version}",
+        toolchain = super::get_toolchain(migrated_format_version),
+    );
+
+    assert_eq!(
         migrated_json["format_version"], migrated_format_version,
         "`migrate_rustdoc_json` did not bump the format version to the expected v{migrated_format_version}",
     );
 
-    (original_json, migrated_json)
+    GeneratedAndMigrated {
+        original_json,
+        new_json,
+        migrated_json,
+    }
 }
 
 pub fn query_both<'a, 'b>(
@@ -67,7 +86,7 @@ pub fn query_both<'a, 'b>(
     map
 }
 
-fn generate_json(source: &Path, format_version: u32) -> PathBuf {
+fn generate_json(source: &Path, format_version: u32, extension: &'static str) -> PathBuf {
     assert_eq!(
         source.extension(),
         Some(OsStr::new("rs")),
@@ -94,7 +113,10 @@ fn generate_json(source: &Path, format_version: u32) -> PathBuf {
     );
     assert!(json_path.is_file());
 
-    json_path
+    let renamed_path = json_path.with_extension(extension);
+    std::fs::rename(json_path, &renamed_path).unwrap();
+
+    renamed_path
 }
 
 fn migrate_json(original_json: &Path, to_format_version: u32) -> PathBuf {
@@ -102,7 +124,12 @@ fn migrate_json(original_json: &Path, to_format_version: u32) -> PathBuf {
 
     assert!(program.is_file(), "`migrate_rustdoc_json` cannot be found");
 
-    let migrated_path = original_json.with_extension("migrated.json");
+    // `with_extension()` only replaces the segment after the final ".". For the path
+    // "vXX.original.json", we use `with_extension("")` to get "vXX.original" before replacing it
+    // with "migrated.json".
+    let migrated_path = original_json
+        .with_extension("")
+        .with_extension("migrated.json");
     let migrated_file = File::create(&migrated_path).unwrap();
 
     let output = Command::new(program)
