@@ -3,6 +3,7 @@ mod utils;
 
 use std::ops::ControlFlow;
 
+use jsonpath_rust::query::QueryRef;
 use serde_json::{Value, json};
 use utils::{generate_and_migrate_to, needs_toolchain, query_both};
 
@@ -63,19 +64,36 @@ fn v42_to_v43() {
 
 #[test]
 fn v43_to_v44() {
-    let ControlFlow::Continue(()) = needs_toolchain(43) else {
-        return;
-    };
+    MigrationTest::new(43, 44)
+        .query_custom(
+            "$.target",
+            Box::new(|result: QueryRef<'_, Value>| {
+                assert_eq!(
+                    result.clone().val(),
+                    &json!(null),
+                    "original result does not match expected value, query $.target at path {path}",
+                    path = result.path(),
+                );
+            }),
+            Box::new(|result: QueryRef<'_, Value>| {
+                let val = result.val();
 
-    let GeneratedAndMigrated { migrated_json, .. } =
-        generate_and_migrate_to("tests/migrations/v43_to_v44.rs", 43, 44);
-
-    let expected = json!({
-        "triple": "",
-        "target_features": [],
-    });
-
-    assert_eq!(migrated_json["target"], expected);
+                assert!(val["target_features"].is_array());
+                assert!(val["triple"].is_string());
+            }),
+            Box::new(|result: QueryRef<'_, Value>| {
+                assert_eq!(
+                    result.clone().val(),
+                    &json!({
+                        "target_features": [],
+                        "triple": "",
+                    }),
+                    "original result does not match expected value, query $.target at path {path}",
+                    path = result.path(),
+                );
+            }),
+        )
+        .test();
 }
 
 #[test]
