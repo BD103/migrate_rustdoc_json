@@ -14,6 +14,13 @@ pub(crate) struct MigrationTest {
     migrated_format_version: u32,
     source: PathBuf,
     query_tests: Vec<QueryTest>,
+    custom_tests: Vec<
+        fn(
+            original_json: &serde_json::Value,
+            new_json: &serde_json::Value,
+            migrated_json: &serde_json::Value,
+        ),
+    >,
 }
 
 impl MigrationTest {
@@ -28,6 +35,7 @@ impl MigrationTest {
                 &format!("v{original_format_version}_to_v{migrated_format_version}.rs"),
             ]),
             query_tests: Vec::with_capacity(1),
+            custom_tests: Vec::new(),
         }
     }
 
@@ -47,6 +55,18 @@ impl MigrationTest {
             original_expected,
             new_and_migrated_expected,
         });
+        self
+    }
+
+    pub(crate) fn custom(
+        mut self,
+        custom_test: fn(
+            original_json: &serde_json::Value,
+            new_json: &serde_json::Value,
+            migrated_json: &serde_json::Value,
+        ),
+    ) -> Self {
+        self.custom_tests.push(custom_test);
         self
     }
 
@@ -109,6 +129,10 @@ impl MigrationTest {
                     migrated_result.path()
                 );
             }
+        }
+
+        for custom_test in self.custom_tests {
+            custom_test(&original_json, &new_json, &migrated_json);
         }
     }
 }
