@@ -12,8 +12,8 @@ use crate::utils::{GeneratedAndMigrated, generate_and_migrate_to, needs_toolchai
 pub(crate) struct MigrationTest {
     original_format_version: u32,
     migrated_format_version: u32,
-    path: PathBuf,
-    queries: Vec<Query>,
+    source: PathBuf,
+    query_tests: Vec<QueryTest>,
 }
 
 impl MigrationTest {
@@ -22,30 +22,30 @@ impl MigrationTest {
         Self {
             original_format_version,
             migrated_format_version,
-            path: PathBuf::from_iter([
+            source: PathBuf::from_iter([
                 "tests",
                 "migrations",
                 &format!("v{original_format_version}_to_v{migrated_format_version}.rs"),
             ]),
-            queries: Vec::with_capacity(1),
+            query_tests: Vec::with_capacity(1),
         }
     }
 
     /// Adds a new query test.
     ///
     /// `query` is the [`JsonPath`] querying both the original and migrated Rustdoc JSON.
-    /// `current_expected` is the expected query result on the original JSON, and `up_expected` is
-    /// the same for the migrated JSON.
+    /// `original_expected` is the expected query result on the original JSON, and
+    /// `new_and_migrated_expected` is the same for the migrated JSON.
     pub(crate) fn query(
         mut self,
         query: &'static str,
         original_expected: serde_json::Value,
-        migrated_expected: serde_json::Value,
+        new_and_migrated_expected: serde_json::Value,
     ) -> Self {
-        self.queries.push(Query {
+        self.query_tests.push(QueryTest {
             query,
             original_expected,
-            migrated_expected,
+            new_and_migrated_expected,
         });
         self
     }
@@ -65,16 +65,16 @@ impl MigrationTest {
             new_json,
             migrated_json,
         } = generate_and_migrate_to(
-            self.path,
+            self.source,
             self.original_format_version,
             self.migrated_format_version,
         );
 
-        for Query {
+        for QueryTest {
             query,
             original_expected,
-            migrated_expected,
-        } in self.queries
+            new_and_migrated_expected,
+        } in self.query_tests
         {
             let original_results = original_json.query_with_path(query).unwrap();
             let new_results = new_json.query_with_path(query).unwrap();
@@ -93,7 +93,7 @@ impl MigrationTest {
             for new_result in new_results {
                 assert_eq!(
                     new_result.clone().val(),
-                    &migrated_expected,
+                    &new_and_migrated_expected,
                     "new result does not match expected value, query {} at path {}",
                     query,
                     new_result.path()
@@ -103,7 +103,7 @@ impl MigrationTest {
             for migrated_result in migrated_results {
                 assert_eq!(
                     migrated_result.clone().val(),
-                    &migrated_expected,
+                    &new_and_migrated_expected,
                     "migrated result does not match expected value, query {} at path {}",
                     query,
                     migrated_result.path()
@@ -113,9 +113,9 @@ impl MigrationTest {
     }
 }
 
-/// A single JSONPath query with expected current and up results.
-struct Query {
+/// A single [`JsonPath`] query with expected original, new, and migrated results.
+struct QueryTest {
     query: &'static str,
     original_expected: serde_json::Value,
-    migrated_expected: serde_json::Value,
+    new_and_migrated_expected: serde_json::Value,
 }
