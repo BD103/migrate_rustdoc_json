@@ -1,12 +1,10 @@
 mod harness;
 mod utils;
 
-use std::ops::ControlFlow;
-
 use serde_json::{Value, json};
-use utils::{generate_and_migrate_to, needs_toolchain, query_both};
+use utils::query_both;
 
-use self::{harness::MigrationTest, utils::GeneratedAndMigrated};
+use self::harness::MigrationTest;
 
 #[test]
 fn v42_to_v43() {
@@ -93,29 +91,24 @@ fn v43_to_v44() {
 
 #[test]
 fn v44_to_v45() {
-    let ControlFlow::Continue(()) = needs_toolchain(44) else {
-        return;
-    };
+    MigrationTest::new(44, 45)
+        .custom(|original_json, _new_json, migrated_json| {
+            let query = "$.index[*].span['begin', 'end']";
 
-    let GeneratedAndMigrated {
-        original_json,
-        migrated_json,
-        ..
-    } = generate_and_migrate_to("tests/migrations/v44_to_v45.rs", 44, 45);
+            for (original_result, migrated_result) in
+                query_both(&original_json, &migrated_json, query).into_values()
+            {
+                let expected = {
+                    let mut original_result = original_result.unwrap().clone();
+                    original_result[1] =
+                        Value::Number((original_result[1].as_u64().unwrap() + 1).into());
+                    original_result
+                };
 
-    let query = "$.index[*].span['begin', 'end']";
-
-    for (original_result, migrated_result) in
-        query_both(&original_json, &migrated_json, query).into_values()
-    {
-        let expected = {
-            let mut original_result = original_result.unwrap().clone();
-            original_result[1] = Value::Number((original_result[1].as_u64().unwrap() + 1).into());
-            original_result
-        };
-
-        assert_eq!(*migrated_result.unwrap(), expected);
-    }
+                assert_eq!(*migrated_result.unwrap(), expected);
+            }
+        })
+        .test();
 }
 
 #[test]
