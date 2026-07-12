@@ -12,41 +12,41 @@ use serde_json::Value;
 
 pub fn generate_and_migrate_to(
     source: impl AsRef<Path>,
-    source_format_version: u32,
-    to_version: u32,
+    original_format_version: u32,
+    migrated_format_version: u32,
 ) -> (Value, Value) {
-    let source_path = generate_json(source.as_ref(), source_format_version);
-    let migrated_path = migrate_json(&source_path, to_version);
+    let original_path = generate_json(source.as_ref(), original_format_version);
+    let migrated_path = migrate_json(&original_path, migrated_format_version);
 
-    let source_json = read_json(&source_path);
+    let original_json = read_json(&original_path);
     let migrated_json = read_json(&migrated_path);
 
     assert_eq!(
-        source_json["format_version"],
-        source_format_version,
-        "toolchain {toolchain} failed to generate JSON with the expected format version v{source_format_version}",
-        toolchain = super::get_toolchain(source_format_version),
+        original_json["format_version"],
+        original_format_version,
+        "toolchain {toolchain} failed to generate JSON with the expected format version v{original_format_version}",
+        toolchain = super::get_toolchain(original_format_version),
     );
 
     assert_eq!(
-        migrated_json["format_version"], to_version,
-        "`migrate_rustdoc_json` did not bump the format version to the expected v{to_version}",
+        migrated_json["format_version"], migrated_format_version,
+        "`migrate_rustdoc_json` did not bump the format version to the expected v{migrated_format_version}",
     );
 
-    (source_json, migrated_json)
+    (original_json, migrated_json)
 }
 
 pub fn query_both<'a, 'b>(
-    source_json: &'a Value,
+    original_json: &'a Value,
     migrated_json: &'b Value,
     query: &str,
 ) -> HashMap<String, (Option<&'a Value>, Option<&'b Value>)> {
     let mut map = HashMap::new();
 
-    let source_query = source_json.query_with_path(query).unwrap();
+    let original_query = original_json.query_with_path(query).unwrap();
     let migrated_query = migrated_json.query_with_path(query).unwrap();
 
-    for q in source_query {
+    for q in original_query {
         // We have to clone the `QueryRef` here because both methods take `self`, and not `&self`.
         let path = q.clone().path();
         let val = q.val();
@@ -60,7 +60,7 @@ pub fn query_both<'a, 'b>(
         let val = q.val();
 
         map.entry(path)
-            .and_modify(|(_source, migrated)| *migrated = Some(val))
+            .and_modify(|(_original, migrated)| *migrated = Some(val))
             .or_insert((None, Some(val)));
     }
 
@@ -97,19 +97,19 @@ fn generate_json(source: &Path, format_version: u32) -> PathBuf {
     json_path
 }
 
-fn migrate_json(json: &Path, format_version: u32) -> PathBuf {
+fn migrate_json(original_json: &Path, to_format_version: u32) -> PathBuf {
     let program = Path::new(env!("CARGO_BIN_EXE_migrate_rustdoc_json"));
 
     assert!(program.is_file(), "`migrate_rustdoc_json` cannot be found");
 
-    let migrated_path = json.with_extension("migrated.json");
+    let migrated_path = original_json.with_extension("migrated.json");
     let migrated_file = File::create(&migrated_path).unwrap();
 
     let output = Command::new(program)
         .arg("--input")
-        .arg(json)
+        .arg(original_json)
         .arg("--to-version")
-        .arg(format_version.to_string())
+        .arg(to_format_version.to_string())
         .stdout(migrated_file)
         .stderr(Stdio::piped())
         .output()
@@ -117,8 +117,8 @@ fn migrate_json(json: &Path, format_version: u32) -> PathBuf {
 
     assert!(
         output.status.success(),
-        "migrating {json} to format version {format_version} failed:\n{stderr}",
-        json = json.display(),
+        "migrating {original_json} to format version {to_format_version} failed:\n{stderr}",
+        original_json = original_json.display(),
         stderr = String::from_utf8_lossy(&output.stderr),
     );
 

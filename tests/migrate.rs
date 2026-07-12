@@ -83,17 +83,17 @@ fn v44() {
         return;
     };
 
-    let (source_json, migrated_json) = generate_and_migrate_to("tests/v44/v44.rs", 44, 45);
+    let (original_json, migrated_json) = generate_and_migrate_to("tests/v44/v44.rs", 44, 45);
 
     let query = "$.index[*].span['begin', 'end']";
 
-    for (source_result, migrated_result) in
-        query_both(&source_json, &migrated_json, query).into_values()
+    for (original_result, migrated_result) in
+        query_both(&original_json, &migrated_json, query).into_values()
     {
         let expected = {
-            let mut source_result = source_result.unwrap().clone();
-            source_result[1] = Value::Number((source_result[1].as_u64().unwrap() + 1).into());
-            source_result
+            let mut original_result = original_result.unwrap().clone();
+            original_result[1] = Value::Number((original_result[1].as_u64().unwrap() + 1).into());
+            original_result
         };
 
         assert_eq!(*migrated_result.unwrap(), expected);
