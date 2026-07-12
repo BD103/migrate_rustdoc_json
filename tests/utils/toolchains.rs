@@ -24,12 +24,13 @@ static TOOLCHAINS: LazyLock<HashMap<u32, &'static str>> = LazyLock::new(|| {
         (45, "nightly-2025-04-20"),
         // <https://github.com/rust-lang/rust/pull/141437>
         (46, "nightly-2025-05-24"),
+        // v47 does not exist.
         // <https://github.com/rust-lang/rust/pull/138165>
         (48, "nightly-2025-06-19"),
         // <https://github.com/rust-lang/rust/pull/142770>
-        (49, "nightly-2025-06-21"), // TODO: Collides, see which one is which
-        // <https://github.com/rust-lang/rust/pull/142491>
-        (50, "nightly-2025-06-21"),
+        (49, "nightly-2025-06-21"),
+        // No nightly toolchain can generate v50, the commits for v50 and v51 were introduced on
+        // the same day.
         // <https://github.com/rust-lang/rust/pull/142817>
         (51, "nightly-2025-06-22"),
         // <https://github.com/rust-lang/rust/pull/142878>
@@ -42,6 +43,14 @@ static TOOLCHAINS: LazyLock<HashMap<u32, &'static str>> = LazyLock::new(|| {
         (55, "nightly-2025-08-02"),
         // <https://github.com/rust-lang/rust/pull/142472>
         (56, "nightly-2025-08-29"),
+        // <https://github.com/rust-lang/rust/pull/149043>
+        (57, "nightly-2025-11-21"),
+        // <https://github.com/rust-lang/rust/pull/158230>
+        (58, "nightly-2026-06-23"),
+        // <https://github.com/rust-lang/rust/pull/158343>
+        (59, "nightly-2026-06-26"),
+        // <https://github.com/rust-lang/rust/pull/158468>
+        (60, "nightly-2026-07-01"),
     ];
 
     HashMap::from(toolchains)

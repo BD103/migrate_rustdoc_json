@@ -164,8 +164,9 @@ fn v48_to_v49() {
 }
 
 #[test]
-fn v49_to_v50() {
-    MigrationTest::new(49, 50)
+fn v49_to_v51() {
+    // No nightly version can generate v50, so we migrate to v51 instead.
+    MigrationTest::new(49, 51)
         .query(
             "$.index[?(@.name == 'cold')].attrs",
             json!(["#[cold]"]),
