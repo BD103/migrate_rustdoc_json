@@ -63,19 +63,32 @@ fn v42_to_v43() {
 
 #[test]
 fn v43_to_v44() {
-    let ControlFlow::Continue(()) = needs_toolchain(43) else {
-        return;
-    };
+    MigrationTest::new(43, 44)
+        .custom(|original_json, new_json, migrated_json| {
+            // Original tests.
+            assert!(
+                original_json.get("target").is_none(),
+                "original should not have `target` field: {}",
+                original_json["target"]
+            );
 
-    let GeneratedAndMigrated { migrated_json, .. } =
-        generate_and_migrate_to("tests/migrations/v43_to_v44.rs", 43, 44);
+            // New tests.
+            assert!(
+                new_json["target"]["triple"].is_string(),
+                "new `target.triple` is not a string: {}",
+                new_json["target"]["triple"]
+            );
+            assert!(
+                new_json["target"]["target_features"].is_array(),
+                "new `target.target_features` is not an array: {}",
+                new_json["target"]["target_features"]
+            );
 
-    let expected = json!({
-        "triple": "",
-        "target_features": [],
-    });
-
-    assert_eq!(migrated_json["target"], expected);
+            // Migrated tests.
+            assert_eq!(migrated_json["target"]["triple"], "");
+            assert_eq!(migrated_json["target"]["target_features"], json!([]));
+        })
+        .test();
 }
 
 #[test]
