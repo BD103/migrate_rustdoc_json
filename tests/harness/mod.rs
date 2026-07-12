@@ -24,7 +24,7 @@ impl MigrationTest {
             migrated_format_version,
             path: PathBuf::from_iter([
                 "tests",
-                &format!("v{original_format_version}"),
+                "migrations",
                 &format!("v{original_format_version}.rs"),
             ]),
             queries: Vec::with_capacity(1),

@@ -70,10 +70,10 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      # We explicitly mention the modules in the `migrations` and `tests/v*` folders, as `rustfmt`
-      # can't discover them by default.
+      # We explicitly mention the modules in the `src/migrations` and `tests/migrations` folders,
+      # as `rustfmt` can't discover them by default.
       - name: Run rustfmt
-        run: cargo fmt --all --check -- ./src/migrations/*.rs ./tests/v*/*.rs
+        run: cargo fmt --all --check -- ./src/migrations/*.rs ./tests/migrations/*.rs
 
   typos:
     name: Check for typos

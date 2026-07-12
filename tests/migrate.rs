@@ -68,7 +68,7 @@ fn v43_to_v44() {
     };
 
     let GeneratedAndMigrated { migrated_json, .. } =
-        generate_and_migrate_to("tests/v43/v43.rs", 43, 44);
+        generate_and_migrate_to("tests/migrations/v43.rs", 43, 44);
 
     let expected = json!({
         "triple": "",
@@ -88,7 +88,7 @@ fn v44_to_v45() {
         original_json,
         migrated_json,
         ..
-    } = generate_and_migrate_to("tests/v44/v44.rs", 44, 45);
+    } = generate_and_migrate_to("tests/migrations/v44.rs", 44, 45);
 
     let query = "$.index[*].span['begin', 'end']";
 
