@@ -39,6 +39,7 @@ rustdoc_types_49 = { version = "0.49", package = "rustdoc-types", features = ["r
 rustdoc_types_50 = { version = "0.50", package = "rustdoc-types", features = ["rustc-hash"] }
 rustdoc_types_51 = { version = "0.51", package = "rustdoc-types", features = ["rustc-hash"] }
 rustdoc_types_52 = { version = "0.52", package = "rustdoc-types", features = ["rustc-hash"] }
+rustdoc_types_53 = { version = "0.53", package = "rustdoc-types", features = ["rustc-hash"] }
 
 [dev-dependencies]
 # Querying JSON, used for simpler testing

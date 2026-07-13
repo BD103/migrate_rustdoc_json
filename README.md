@@ -52,7 +52,7 @@ migrate_rustdoc_json --input target/doc/crate_name.json --to-version 45 > migrat
 
 |`merge_rustdoc_json` Version|Format Version|
 |-|-|
-|v0.5.0-dev|v41..=v52|
+|v0.5.0-dev|v41..=v53|
 |v0.4.0|v41..=v50|
 |v0.3.0|v41..=v46|
 |v0.2.0|v41..=v45|
