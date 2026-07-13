@@ -1,9 +1,13 @@
+mod json;
+mod toolchains;
+
 use std::{ops::ControlFlow, path::PathBuf};
 
 use jsonpath_rust::JsonPath;
 use pretty_assertions::assert_eq;
 
-use crate::utils::{GeneratedAndMigrated, generate_and_migrate_to, needs_toolchain};
+use self::json::{GeneratedAndMigrated, generate_and_migrate_to};
+use self::toolchains::needs_toolchain;
 
 /// A builder that configures and runs a migration test.
 ///

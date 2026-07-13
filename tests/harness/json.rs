@@ -8,6 +8,8 @@ use std::{
 
 use serde_json::Value;
 
+use crate::harness::toolchains::get_toolchain;
+
 pub struct GeneratedAndMigrated {
     pub original_json: Value,
     pub new_json: Value,
@@ -31,14 +33,14 @@ pub fn generate_and_migrate_to(
         original_json["format_version"],
         original_format_version,
         "toolchain {toolchain} failed to generate JSON with the expected format version v{original_format_version}",
-        toolchain = super::get_toolchain(original_format_version),
+        toolchain = get_toolchain(original_format_version),
     );
 
     assert_eq!(
         new_json["format_version"],
         migrated_format_version,
         "toolchain {toolchain} failed to generate JSON with the expected format version v{migrated_format_version}",
-        toolchain = super::get_toolchain(migrated_format_version),
+        toolchain = get_toolchain(migrated_format_version),
     );
 
     assert_eq!(
@@ -65,7 +67,7 @@ fn generate_json(source: &Path, format_version: u32, extension: &'static str) ->
 
     let status = Command::new("rustup")
         .arg("run")
-        .arg(super::get_toolchain(format_version))
+        .arg(get_toolchain(format_version))
         .arg("rustdoc")
         .arg(format!("--out-dir={}", json_dir.display()))
         .arg("-Zunstable-options")
