@@ -1,8 +1,9 @@
 mod harness;
 mod utils;
 
+use std::collections::HashMap;
+
 use serde_json::{Value, json};
-use utils::query_both;
 
 use self::harness::MigrationTest;
 
@@ -92,20 +93,49 @@ fn v43_to_v44() {
 #[test]
 fn v44_to_v45() {
     MigrationTest::new(44, 45)
-        .custom(|original_json, _new_json, migrated_json| {
-            let query = "$.index[*].span['begin', 'end']";
+        .custom(|original_json, new_json, migrated_json| {
+            let mut map = HashMap::new();
 
-            for (original_result, migrated_result) in
-                query_both(&original_json, &migrated_json, query).into_values()
+            // Populate the map. The key is the index in the Rustdoc JSON, the value is an array of
+            // optional spans in the form of `[original_span, new_span, migrated_span]`.
+            for (i, json) in [original_json, new_json, migrated_json]
+                .into_iter()
+                .enumerate()
             {
-                let expected = {
-                    let mut original_result = original_result.unwrap().clone();
-                    original_result[1] =
-                        Value::Number((original_result[1].as_u64().unwrap() + 1).into());
-                    original_result
-                };
+                for (index, value) in json["index"].as_object().unwrap() {
+                    let span = &value["span"];
 
-                assert_eq!(*migrated_result.unwrap(), expected);
+                    if span.is_null() {
+                        continue;
+                    }
+
+                    map.entry(index).or_insert([None, None, None])[i] = Some(span);
+                }
+            }
+
+            for [original_span, new_span, migrated_span] in map.into_values() {
+                match original_span {
+                    // If there is an original span, assert the migrated span has the column
+                    // increased by one.
+                    Some(original_span) => {
+                        let mut manually_migrated_span = original_span.clone();
+
+                        // Manually increase column number of spans by one.
+                        manually_migrated_span["begin"][1] = Value::Number(
+                            (manually_migrated_span["begin"][1].as_u64().unwrap() + 1).into(),
+                        );
+                        manually_migrated_span["end"][1] = Value::Number(
+                            (manually_migrated_span["end"][1].as_u64().unwrap() + 1).into(),
+                        );
+
+                        assert_eq!(Some(manually_migrated_span).as_ref(), migrated_span);
+                    }
+                    // If the original span is null, the migrated span should also be null. No
+                    // conjuring spans out of thin air!
+                    None => assert!(migrated_span.is_none()),
+                }
+
+                assert_eq!(new_span, migrated_span);
             }
         })
         .test();

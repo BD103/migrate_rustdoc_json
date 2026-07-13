@@ -1,5 +1,4 @@
 use std::{
-    collections::HashMap,
     ffi::OsStr,
     fs::File,
     io::BufReader,
@@ -7,7 +6,6 @@ use std::{
     process::{Command, Stdio},
 };
 
-use jsonpath_rust::JsonPath;
 use serde_json::Value;
 
 pub struct GeneratedAndMigrated {
@@ -53,37 +51,6 @@ pub fn generate_and_migrate_to(
         new_json,
         migrated_json,
     }
-}
-
-pub fn query_both<'a, 'b>(
-    original_json: &'a Value,
-    migrated_json: &'b Value,
-    query: &str,
-) -> HashMap<String, (Option<&'a Value>, Option<&'b Value>)> {
-    let mut map = HashMap::new();
-
-    let original_query = original_json.query_with_path(query).unwrap();
-    let migrated_query = migrated_json.query_with_path(query).unwrap();
-
-    for q in original_query {
-        // We have to clone the `QueryRef` here because both methods take `self`, and not `&self`.
-        let path = q.clone().path();
-        let val = q.val();
-
-        map.insert(path, (Some(val), None));
-    }
-
-    for q in migrated_query {
-        // We have to clone the `QueryRef` here because both methods take `self`, and not `&self`.
-        let path = q.clone().path();
-        let val = q.val();
-
-        map.entry(path)
-            .and_modify(|(_original, migrated)| *migrated = Some(val))
-            .or_insert((None, Some(val)));
-    }
-
-    map
 }
 
 fn generate_json(source: &Path, format_version: u32, extension: &'static str) -> PathBuf {
