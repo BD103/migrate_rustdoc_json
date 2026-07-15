@@ -9,6 +9,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **All Changes**: [`v0.4.0...main`](https://github.com/BD103/migrate_rustdoc_json/compare/v0.4.0...main)
 - **Format Versions**: v41..=v53
 
+### Added
+
+- Format versions v51, v52, and v53 are now supported ([`a732263`](https://github.com/BD103/migrate_rustdoc_json/commit/a732263015c701ecc64e393c659c86e9d2e38154), [`e00a35f`](https://github.com/BD103/migrate_rustdoc_json/commit/e00a35f728dce6556e23c6c564957751c93900cb), [`4db85b5`](https://github.com/BD103/migrate_rustdoc_json/commit/4db85b5cbecf2bc7b91bdaf88da7d437a78e034e))
+    - Note that while v50 is a valid format version, no nightly Rust toolchain generates it.
+- Caveats are now reported when `migrate_rustdoc_json` is unable to perfectly migrate its input ([`5d53f69`](https://github.com/BD103/migrate_rustdoc_json/commit/5d53f695db7036f786dfc1cb02e8736b37c0a940))
+
+### Fixed
+
+- Corrected v0.4.0 version in compatibility table ([`c0de24b`](https://github.com/BD103/migrate_rustdoc_json/commit/c0de24b1132f2a404eae9133685c88bde02f077e))
+
 ## v0.4.0 - 2025-11-18
 
 - **All Changes**: [`v0.3.0...v0.4.0`](https://github.com/BD103/migrate_rustdoc_json/compare/v0.3.0...v0.4.0)
@@ -16,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Format versions v48, v49, and v50 and now supported ([`1b6c5e7`](https://github.com/BD103/migrate_rustdoc_json/commit/1b6c5e765c0ef8fa6faa71c22d3003f5d9f9efb3), [`2650a40`](https://github.com/BD103/migrate_rustdoc_json/commit/2650a40c93d73c0b344e90cfa704daad20b5a179), [`b1a4c33`](https://github.com/BD103/migrate_rustdoc_json/commit/b1a4c335bfc1f017a368fe320a1cc984bc2ecc3f))
+- Format versions v48, v49, and v50 are now supported ([`1b6c5e7`](https://github.com/BD103/migrate_rustdoc_json/commit/1b6c5e765c0ef8fa6faa71c22d3003f5d9f9efb3), [`2650a40`](https://github.com/BD103/migrate_rustdoc_json/commit/2650a40c93d73c0b344e90cfa704daad20b5a179), [`b1a4c33`](https://github.com/BD103/migrate_rustdoc_json/commit/b1a4c335bfc1f017a368fe320a1cc984bc2ecc3f))
     - Format version v47 does not exist. `migrate_rustdoc_json` will skip it and migrate from v46 directly to v48. If you try to migrate JSON with a format version of 47, or specify `--to-version 47`, the CLI will exit with an error.
 
 ## v0.3.0 - 2025-06-17
