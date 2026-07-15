@@ -12,7 +12,12 @@ fn v42_to_v43() {
         .query(
             "$.index[?(@.name == 'ReprRust')].attrs",
             json!(["#[attr = Repr([ReprRust])]\n"]),
-            json!(["#[repr(Rust)]"]),
+            json!([]),
+        )
+        .query(
+            "$.index[?(@.name == 'ReprRustPacked')].attrs",
+            json!(["#[attr = Repr([ReprRust, ReprPacked(Align(1 bytes))])]\n"]),
+            json!(["#[repr(packed(1))]"]),
         )
         .query(
             "$.index[?(@.name == 'ReprC')].attrs",

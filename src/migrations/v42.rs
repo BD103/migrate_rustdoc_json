@@ -11,6 +11,9 @@
 //! [commit `d93f678f`](https://github.com/rust-lang/rust/blob/d93f678fa55842cccd2f091deccd93e9494b3764/compiler/rustc_attr_data_structures/src/attributes.rs#L193)
 //! of the Rust compiler.
 //!
+//! Note that while v42 includes `#[attr = Repr([ReprRust])]` for types explicitly marked with
+//! `#[repr(Rust)]`, v43 removes these annotations.
+//!
 //! <https://github.com/rust-lang/rustdoc-types/blob/trunk/CHANGELOG.md#v0390---2025-03-24>
 //!
 //! # `#[repr(...)]` Debug Format
@@ -242,8 +245,8 @@ mod parser {
         )
         .parse_next(input)?;
 
-        // Only keep non-empty reprs.
-        reprs.retain(|s| !matches!(s, ReprAttr::Empty));
+        // Remove `#[repr(Rust)]` and empty reprs.
+        reprs.retain(|s| !matches!(s, ReprAttr::Rust | ReprAttr::Empty));
 
         // If there are no reprs, usually because they got filtered out, return `None`.
         if reprs.is_empty() {

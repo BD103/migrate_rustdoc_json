@@ -4,6 +4,12 @@ pub struct ReprRust {
     b: u64,
 }
 
+#[repr(Rust, packed)]
+pub struct ReprRustPacked {
+    a: u8,
+    b: u64,
+}
+
 #[repr(C)]
 pub struct ReprC {
     a: u8,
